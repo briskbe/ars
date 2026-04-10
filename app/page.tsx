@@ -29,12 +29,14 @@ import {
 /*  DATA                                                               */
 /* ------------------------------------------------------------------ */
 
-const NAV_LINKS = [
+const NAV_LINKS_LEFT = [
+  { label: "Homepagina", href: "#" },
   { label: "Diensten", href: "#diensten" },
-  { label: "Over ons", href: "#over-ons" },
-  { label: "Waarom ARS", href: "#waarom" },
-  { label: "Contact", href: "#contact" },
+  { label: "Realisaties", href: "#over-ons" },
+  { label: "Over ons", href: "#waarom" },
 ];
+
+const NAV_LINKS_RIGHT = [{ label: "Vacatures", href: "#vacatures" }];
 
 const SERVICES = [
   {
@@ -139,39 +141,83 @@ const REASONS = [
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState("#");
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-xl">
-      <div className="container-wide flex h-20 items-center justify-between px-6 lg:px-12">
+    <nav className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white/90 backdrop-blur-xl">
+      <div className="container-wide flex h-[72px] items-center px-6 lg:px-12">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black">
-            <Building2 className="h-5 w-5 text-white" strokeWidth={2.5} />
-          </div>
-          <div>
-            <span className="text-xl font-bold tracking-tight text-black">
+        <a href="#" className="mr-12 flex-shrink-0" onClick={() => setActiveLink("#")}>
+          <div className="flex flex-col">
+            <span
+              className="text-[28px] font-black leading-none tracking-[-0.04em] text-black"
+              style={{ fontStretch: "condensed" }}
+            >
               ARS
             </span>
-            <span className="text-xl font-light tracking-tight text-gray-400">
-              {" "}
-              Metals
+            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-black/70">
+              Industrial Services
             </span>
           </div>
         </a>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((link) => (
+        {/* Desktop: left nav links */}
+        <div className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS_LEFT.map((link) => (
             <a
-              key={link.href}
+              key={link.label}
               href={link.href}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-black"
+              onClick={() => setActiveLink(link.href)}
+              className={`relative py-1 text-[15px] transition-colors duration-200 ${
+                activeLink === link.href
+                  ? "font-semibold text-black"
+                  : "font-medium text-gray-800 hover:text-black"
+              }`}
             >
               {link.label}
+              {/* Active underline */}
+              <span
+                className={`absolute -bottom-0.5 left-0 h-[2px] bg-black transition-all duration-300 ${
+                  activeLink === link.href ? "w-full" : "w-0"
+                }`}
+              />
+              {/* Hover underline */}
+              {activeLink !== link.href && (
+                <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-black/40 transition-all duration-300 group-hover:w-full" />
+              )}
             </a>
           ))}
-          <a href="#contact" className="btn-primary ml-4 !py-2.5 !text-sm">
-            Contact opnemen
+        </div>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Desktop: right nav links */}
+        <div className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS_RIGHT.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={() => setActiveLink(link.href)}
+              className={`relative py-1 text-[15px] transition-colors duration-200 ${
+                activeLink === link.href
+                  ? "font-semibold text-black"
+                  : "font-medium text-gray-800 hover:text-black"
+              }`}
+            >
+              {link.label}
+              <span
+                className={`absolute -bottom-0.5 left-0 h-[2px] bg-black transition-all duration-300 ${
+                  activeLink === link.href ? "w-full" : "w-0"
+                }`}
+              />
+            </a>
+          ))}
+          <a
+            href="#contact"
+            className="rounded-xl bg-black px-6 py-2.5 text-[15px] font-semibold text-white transition-all duration-200 hover:bg-gray-800 active:scale-[0.98]"
+          >
+            Contact
           </a>
         </div>
 
@@ -187,13 +233,20 @@ function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-gray-100 bg-white px-6 pb-6 pt-4 md:hidden">
-          {NAV_LINKS.map((link) => (
+        <div className="border-t border-gray-100 bg-white px-6 pb-6 pt-2 md:hidden">
+          {[...NAV_LINKS_LEFT, ...NAV_LINKS_RIGHT].map((link) => (
             <a
-              key={link.href}
+              key={link.label}
               href={link.href}
-              onClick={() => setOpen(false)}
-              className="block rounded-lg px-4 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              onClick={() => {
+                setActiveLink(link.href);
+                setOpen(false);
+              }}
+              className={`block border-b border-gray-50 px-2 py-3.5 text-[15px] transition-colors ${
+                activeLink === link.href
+                  ? "font-semibold text-black"
+                  : "font-medium text-gray-600 hover:text-black"
+              }`}
             >
               {link.label}
             </a>
@@ -201,9 +254,9 @@ function Navbar() {
           <a
             href="#contact"
             onClick={() => setOpen(false)}
-            className="btn-primary mt-4 w-full"
+            className="mt-4 block rounded-xl bg-black px-6 py-3 text-center text-[15px] font-semibold text-white transition-all hover:bg-gray-800"
           >
-            Contact opnemen
+            Contact
           </a>
         </div>
       )}
