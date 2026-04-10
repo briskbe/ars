@@ -203,7 +203,7 @@ function Navbar() {
             </a>
           ))}
           <a
-            href="#contact"
+            href="/contact"
             className="rounded-xl bg-black px-6 py-2.5 text-[15px] font-semibold text-white transition-all duration-200 hover:bg-gray-800 active:scale-[0.98]"
           >
             Contact
@@ -241,7 +241,7 @@ function Navbar() {
             </a>
           ))}
           <a
-            href="#contact"
+            href="/contact"
             onClick={() => setOpen(false)}
             className="mt-4 block rounded-xl bg-black px-6 py-3 text-center text-[15px] font-semibold text-white transition-all hover:bg-gray-800"
           >

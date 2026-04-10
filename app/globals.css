@@ -76,3 +76,44 @@
 .animate-delay-400 {
   animation-delay: 400ms;
 }
+
+/* Floating particles for contact page hero */
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  50% { transform: translateY(-120px) translateX(30px) scale(1.2); }
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+}
+
+.particle-1 {
+  width: 6px; height: 6px;
+  left: 10%; bottom: 20%;
+  animation: float 8s ease-in-out infinite;
+}
+.particle-2 {
+  width: 4px; height: 4px;
+  left: 30%; bottom: 30%;
+  animation: float 10s ease-in-out infinite 1s;
+}
+.particle-3 {
+  width: 8px; height: 8px;
+  left: 55%; bottom: 15%;
+  animation: float 12s ease-in-out infinite 2s;
+}
+.particle-4 {
+  width: 5px; height: 5px;
+  left: 75%; bottom: 25%;
+  animation: float 9s ease-in-out infinite 3s;
+}
+.particle-5 {
+  width: 3px; height: 3px;
+  left: 90%; bottom: 35%;
+  animation: float 11s ease-in-out infinite 0.5s;
+}
