@@ -22,8 +22,49 @@ import {
   CheckCircle2,
   Star,
   Sparkles,
-  Building2,
 } from "lucide-react";
+
+function ArsLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 460 188"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      {/* A: Chevron */}
+      <path d="M 2 136 L 72 2 H 89 L 159 136 H 131 L 80.5 24 L 30 136 Z" />
+
+      {/* R: Bowl with bar cutout + leg */}
+      <path
+        fillRule="evenodd"
+        d="M 172 2 H 286 C 312 2 318 16 318 28 V 46 C 318 62 308 72 286 72 H 234 L 316 136 H 286 L 210 76 H 198 V 136 H 172 V 2 Z
+           M 318 26 H 252 C 238 26 238 48 252 48 H 318 Z"
+      />
+
+      {/* S: Three bars with S-flow cutouts */}
+      <path
+        fillRule="evenodd"
+        d="M 358 2 H 434 C 452 2 458 14 458 26 V 110 C 458 126 450 136 434 136 H 358 C 340 136 334 124 334 110 V 26 C 334 14 342 2 358 2 Z
+           M 334 32 H 394 C 410 32 410 54 394 54 H 334 Z
+           M 458 84 H 398 C 382 84 382 106 398 106 H 458 Z"
+      />
+
+      {/* INDUSTRIAL SERVICES */}
+      <text
+        x="230"
+        y="176"
+        textAnchor="middle"
+        fontFamily="Inter, sans-serif"
+        fontSize="21"
+        fontWeight="400"
+        letterSpacing="7"
+      >
+        INDUSTRIAL SERVICES
+      </text>
+    </svg>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -148,17 +189,7 @@ function Navbar() {
       <div className="container-wide flex h-[72px] items-center px-6 lg:px-12">
         {/* Logo */}
         <a href="#" className="mr-12 flex-shrink-0" onClick={() => setActiveLink("#")}>
-          <div className="flex flex-col">
-            <span
-              className="text-[28px] font-black leading-none tracking-[-0.04em] text-black"
-              style={{ fontStretch: "condensed" }}
-            >
-              ARS
-            </span>
-            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-black/70">
-              Industrial Services
-            </span>
-          </div>
+          <ArsLogo className="h-11 w-auto text-black" />
         </a>
 
         {/* Desktop: left nav links */}
@@ -393,15 +424,7 @@ function About() {
               </div>
               {/* Content */}
               <div className="relative flex h-full flex-col items-center justify-center p-12 text-center">
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-white/20 bg-white/10 backdrop-blur-sm">
-                  <Building2
-                    className="h-10 w-10 text-white"
-                    strokeWidth={2}
-                  />
-                </div>
-                <h3 className="text-3xl font-extrabold text-white md:text-4xl">
-                  ARS Metals
-                </h3>
+                <ArsLogo className="mb-4 h-20 w-auto text-white" />
                 <p className="mt-3 max-w-sm text-lg text-gray-400">
                   Vakmanschap, betrouwbaarheid en toewijding sinds dag één
                 </p>
@@ -716,19 +739,8 @@ function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <a href="#" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black">
-                <Building2 className="h-5 w-5 text-white" strokeWidth={2.5} />
-              </div>
-              <div>
-                <span className="text-xl font-bold tracking-tight text-black">
-                  ARS
-                </span>
-                <span className="text-xl font-light tracking-tight text-gray-400">
-                  {" "}
-                  Metals
-                </span>
-              </div>
+            <a href="#">
+              <ArsLogo className="h-12 w-auto text-black" />
             </a>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-gray-400">
               Uw betrouwbare partner voor industriële diensten. Van laswerken tot
