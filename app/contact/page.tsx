@@ -27,7 +27,7 @@ const NAV_LINKS_LEFT = [
   { label: "Over ons", href: "/#waarom" },
 ];
 
-const NAV_LINKS_RIGHT = [{ label: "Vacatures", href: "/#vacatures" }];
+const NAV_LINKS_RIGHT = [{ label: "Vacatures", href: "/vacatures" }];
 
 const CONTACT_INFO = [
   {
@@ -802,7 +802,7 @@ function Footer() {
                 { label: "Homepagina", href: "/" },
                 { label: "Diensten", href: "/#diensten" },
                 { label: "Over ons", href: "/#waarom" },
-                { label: "Vacatures", href: "/#vacatures" },
+                { label: "Vacatures", href: "/vacatures" },
                 { label: "Contact", href: "/contact" },
               ].map((item) => (
                 <li key={item.label}>
