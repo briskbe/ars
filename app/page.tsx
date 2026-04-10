@@ -24,48 +24,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-function ArsLogo({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 460 188"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      {/* A: Chevron – sharp peak, thick legs, no crossbar */}
-      <path d="M 2 136 L 73 4 H 89 L 160 136 H 132 L 81 26 L 30 136 Z" />
-
-      {/* R: Smooth bowl with slot cutout + diagonal leg */}
-      <path
-        fillRule="evenodd"
-        d="M 172 2 H 272 C 302 2 318 18 318 38 C 318 58 302 74 272 74 H 234 L 316 136 H 288 L 210 78 H 198 V 136 H 172 V 2 Z
-           M 318 28 H 250 C 234 28 234 48 250 48 H 318 Z"
-      />
-
-      {/* S: Rounded rect with two S-flow cutouts (left/right) */}
-      <path
-        fillRule="evenodd"
-        d="M 358 2 H 434 C 450 2 458 12 458 28 V 110 C 458 126 450 136 434 136 H 358 C 342 136 334 126 334 110 V 28 C 334 12 342 2 358 2 Z
-           M 334 32 H 394 C 410 32 410 54 394 54 H 334 Z
-           M 458 84 H 398 C 382 84 382 106 398 106 H 458 Z"
-      />
-
-      {/* INDUSTRIAL SERVICES */}
-      <text
-        x="230"
-        y="176"
-        textAnchor="middle"
-        fontFamily="Inter, sans-serif"
-        fontSize="22"
-        fontWeight="300"
-        letterSpacing="8"
-      >
-        INDUSTRIAL SERVICES
-      </text>
-    </svg>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
 /* ------------------------------------------------------------------ */
@@ -189,7 +147,7 @@ function Navbar() {
       <div className="container-wide flex h-[72px] items-center px-6 lg:px-12">
         {/* Logo */}
         <a href="#" className="mr-12 flex-shrink-0" onClick={() => setActiveLink("#")}>
-          <ArsLogo className="h-11 w-auto text-black" />
+          <img src="/logo.png" alt="ARS Industrial Services" className="h-11 w-auto" />
         </a>
 
         {/* Desktop: left nav links */}
@@ -424,7 +382,7 @@ function About() {
               </div>
               {/* Content */}
               <div className="relative flex h-full flex-col items-center justify-center p-12 text-center">
-                <ArsLogo className="mb-4 h-20 w-auto text-white" />
+                <img src="/logo.png" alt="ARS Industrial Services" className="mb-4 h-20 w-auto brightness-0 invert" />
                 <p className="mt-3 max-w-sm text-lg text-gray-400">
                   Vakmanschap, betrouwbaarheid en toewijding sinds dag één
                 </p>
@@ -740,7 +698,7 @@ function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-2">
             <a href="#">
-              <ArsLogo className="h-12 w-auto text-black" />
+              <img src="/logo.png" alt="ARS Industrial Services" className="h-12 w-auto" />
             </a>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-gray-400">
               Uw betrouwbare partner voor industriële diensten. Van laswerken tot
