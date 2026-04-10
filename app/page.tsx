@@ -35,7 +35,7 @@ const NAV_LINKS_LEFT = [
   { label: "Over ons", href: "#waarom" },
 ];
 
-const NAV_LINKS_RIGHT = [{ label: "Vacatures", href: "#vacatures" }];
+const NAV_LINKS_RIGHT = [{ label: "Vacatures", href: "/vacatures" }];
 
 const SERVICES = [
   {
@@ -526,7 +526,7 @@ function JobsBanner() {
           </div>
         </div>
         <a
-          href="#contact"
+          href="/vacatures"
           className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black shadow-lg transition-all duration-300 hover:bg-gray-100 hover:-translate-y-0.5"
         >
           Bekijk vacatures
