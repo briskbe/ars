@@ -32,20 +32,20 @@ function ArsLogo({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* A: Chevron */}
-      <path d="M 2 136 L 72 2 H 89 L 159 136 H 131 L 80.5 24 L 30 136 Z" />
+      {/* A: Chevron – sharp peak, thick legs, no crossbar */}
+      <path d="M 2 136 L 73 4 H 89 L 160 136 H 132 L 81 26 L 30 136 Z" />
 
-      {/* R: Bowl with bar cutout + leg */}
+      {/* R: Smooth bowl with slot cutout + diagonal leg */}
       <path
         fillRule="evenodd"
-        d="M 172 2 H 286 C 312 2 318 16 318 28 V 46 C 318 62 308 72 286 72 H 234 L 316 136 H 286 L 210 76 H 198 V 136 H 172 V 2 Z
-           M 318 26 H 252 C 238 26 238 48 252 48 H 318 Z"
+        d="M 172 2 H 272 C 302 2 318 18 318 38 C 318 58 302 74 272 74 H 234 L 316 136 H 288 L 210 78 H 198 V 136 H 172 V 2 Z
+           M 318 28 H 250 C 234 28 234 48 250 48 H 318 Z"
       />
 
-      {/* S: Three bars with S-flow cutouts */}
+      {/* S: Rounded rect with two S-flow cutouts (left/right) */}
       <path
         fillRule="evenodd"
-        d="M 358 2 H 434 C 452 2 458 14 458 26 V 110 C 458 126 450 136 434 136 H 358 C 340 136 334 124 334 110 V 26 C 334 14 342 2 358 2 Z
+        d="M 358 2 H 434 C 450 2 458 12 458 28 V 110 C 458 126 450 136 434 136 H 358 C 342 136 334 126 334 110 V 28 C 334 12 342 2 358 2 Z
            M 334 32 H 394 C 410 32 410 54 394 54 H 334 Z
            M 458 84 H 398 C 382 84 382 106 398 106 H 458 Z"
       />
@@ -56,9 +56,9 @@ function ArsLogo({ className }: { className?: string }) {
         y="176"
         textAnchor="middle"
         fontFamily="Inter, sans-serif"
-        fontSize="21"
-        fontWeight="400"
-        letterSpacing="7"
+        fontSize="22"
+        fontWeight="300"
+        letterSpacing="8"
       >
         INDUSTRIAL SERVICES
       </text>
