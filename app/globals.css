@@ -10,17 +10,17 @@
   }
 
   body {
-    @apply font-sans text-navy-900 antialiased;
+    @apply font-sans text-gray-900 antialiased;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition-all duration-300 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/30 hover:-translate-y-0.5 active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-black px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/10 transition-all duration-300 hover:bg-gray-800 hover:shadow-xl hover:shadow-black/15 hover:-translate-y-0.5 active:translate-y-0;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-navy-200 bg-white px-7 py-3.5 text-sm font-semibold text-navy-900 transition-all duration-300 hover:border-navy-900 hover:bg-navy-900 hover:text-white hover:-translate-y-0.5 active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-200 bg-white px-7 py-3.5 text-sm font-semibold text-gray-900 transition-all duration-300 hover:border-black hover:bg-black hover:text-white hover:-translate-y-0.5 active:translate-y-0;
   }
 
   .section-padding {
@@ -36,10 +36,6 @@
   .text-balance {
     text-wrap: balance;
   }
-
-  .gradient-text {
-    @apply bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent;
-  }
 }
 
 /* Subtle grid background */
@@ -50,27 +46,6 @@
     ),
     linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
-}
-
-/* Animated gradient border */
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-.shimmer-border {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(249, 115, 22, 0.3),
-    transparent
-  );
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
 }
 
 /* Fade in animation */
