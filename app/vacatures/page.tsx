@@ -21,6 +21,8 @@ import {
   Briefcase,
   ChevronDown,
   CheckCircle2,
+  Upload,
+  FileText,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -441,10 +443,12 @@ function JobCard({
   job,
   index,
   inView,
+  onApply,
 }: {
   job: (typeof JOBS_INTERNAL)[0];
   index: number;
   inView: boolean;
+  onApply: (jobTitle: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const Icon = job.icon;
@@ -508,20 +512,17 @@ function JobCard({
               </ul>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                href="#solliciteren"
+            <div className="mt-6">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onApply(job.title);
+                }}
                 className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800 active:scale-[0.98]"
               >
                 Solliciteren
                 <ArrowRight className="h-4 w-4" />
-              </a>
-              <a
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98]"
-              >
-                Meer informatie
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -532,7 +533,271 @@ function JobCard({
 
 /* ------------------------------------------------------------------ */
 
-function JobListings() {
+function ApplyModal({
+  jobTitle,
+  onClose,
+}: {
+  jobTitle: string;
+  onClose: () => void;
+}) {
+  const [formState, setFormState] = useState<"idle" | "sending" | "sent">(
+    "idle"
+  );
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormState("sending");
+    setTimeout(() => setFormState("sent"), 1800);
+  };
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFileName(file ? file.name : null);
+  };
+
+  const inputBase =
+    "w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400";
+  const inputIdle = "border-gray-200 hover:border-gray-300";
+  const inputFocus = "border-gray-900 ring-2 ring-gray-900/10";
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-2xl animate-modal-in">
+        {/* Header */}
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-6 py-5 sm:px-8">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">Solliciteren</h3>
+            <p className="mt-0.5 text-sm text-gray-400">{jobTitle}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {formState === "sent" ? (
+          <div className="flex flex-col items-center justify-center px-6 py-16 text-center sm:px-8">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-900">
+              <CheckCircle2 className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
+              Sollicitatie ontvangen
+            </h3>
+            <p className="mt-2 max-w-xs text-sm text-gray-500">
+              Bedankt voor je interesse in de functie {jobTitle}. Wij nemen zo
+              snel mogelijk contact met je op.
+            </p>
+            <button
+              onClick={onClose}
+              className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+            >
+              Sluiten
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="px-6 py-6 sm:px-8">
+            <div className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                    Voornaam *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Jan"
+                    onFocus={() => setFocusedField("m-firstname")}
+                    onBlur={() => setFocusedField(null)}
+                    className={`${inputBase} ${
+                      focusedField === "m-firstname" ? inputFocus : inputIdle
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                    Achternaam *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="De Vries"
+                    onFocus={() => setFocusedField("m-lastname")}
+                    onBlur={() => setFocusedField(null)}
+                    className={`${inputBase} ${
+                      focusedField === "m-lastname" ? inputFocus : inputIdle
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  E-mailadres *
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <input
+                    required
+                    type="email"
+                    placeholder="jan@voorbeeld.be"
+                    onFocus={() => setFocusedField("m-email")}
+                    onBlur={() => setFocusedField(null)}
+                    className={`${inputBase} pl-11 ${
+                      focusedField === "m-email" ? inputFocus : inputIdle
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Telefoonnummer *
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <input
+                    required
+                    type="tel"
+                    placeholder="+32 (0) 123 45 67 89"
+                    onFocus={() => setFocusedField("m-phone")}
+                    onBlur={() => setFocusedField(null)}
+                    className={`${inputBase} pl-11 ${
+                      focusedField === "m-phone" ? inputFocus : inputIdle
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Resume upload */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  CV uploaden *
+                </label>
+                <label
+                  className={`flex cursor-pointer items-center gap-3 rounded-lg border border-dashed px-4 py-4 transition-all duration-200 ${
+                    fileName
+                      ? "border-gray-900 bg-gray-50"
+                      : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                  }`}
+                >
+                  <input
+                    required
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFile}
+                    className="hidden"
+                  />
+                  {fileName ? (
+                    <>
+                      <FileText className="h-5 w-5 shrink-0 text-gray-900" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gray-900">
+                          {fileName}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          Klik om te wijzigen
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-5 w-5 shrink-0 text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">
+                          Klik om je CV te uploaden
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          PDF, DOC of DOCX (max. 10MB)
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </label>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Motivatie
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Vertel kort waarom je interesse hebt in deze functie..."
+                  onFocus={() => setFocusedField("m-message")}
+                  onBlur={() => setFocusedField(null)}
+                  className={`${inputBase} resize-none ${
+                    focusedField === "m-message" ? inputFocus : inputIdle
+                  }`}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={formState === "sending"}
+                className="w-full rounded-lg bg-gray-900 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-gray-800 active:scale-[0.99] disabled:opacity-60"
+              >
+                {formState === "sending" ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg
+                      className="h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    Versturen...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    Sollicitatie versturen
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function JobListings({
+  onApply,
+}: {
+  onApply: (jobTitle: string) => void;
+}) {
   const { ref, inView } = useInView(0.05);
 
   return (
@@ -561,7 +826,7 @@ function JobListings() {
 
         <div className="mt-10 space-y-3">
           {JOBS_INTERNAL.map((job, i) => (
-            <JobCard key={job.title} job={job} index={i} inView={inView} />
+            <JobCard key={job.title} job={job} index={i} inView={inView} onApply={onApply} />
           ))}
         </div>
 
@@ -582,7 +847,7 @@ function JobListings() {
 
         <div className="mt-10 space-y-3">
           {JOBS_SUBCONTRACTOR.map((job, i) => (
-            <JobCard key={job.title} job={job} index={i} inView={inView} />
+            <JobCard key={job.title} job={job} index={i} inView={inView} onApply={onApply} />
           ))}
         </div>
       </div>
@@ -598,11 +863,17 @@ function ApplicationCTA() {
     "idle"
   );
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormState("sending");
     setTimeout(() => setFormState("sent"), 1800);
+  };
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFileName(file ? file.name : null);
   };
 
   const inputBase =
@@ -713,10 +984,10 @@ function ApplicationCTA() {
                 className="rounded-xl border border-gray-200 bg-white p-8 md:p-10"
               >
                 <h3 className="text-lg font-bold text-gray-900">
-                  Sollicitatieformulier
+                  Open sollicitatie
                 </h3>
                 <p className="mt-1 text-sm text-gray-400">
-                  Vul je gegevens in en wij nemen contact op
+                  Staat jouw functie er niet bij? Solliciteer hier spontaan
                 </p>
 
                 <div className="mt-8 space-y-5">
@@ -815,6 +1086,52 @@ function ApplicationCTA() {
                           : inputIdle
                       }`}
                     />
+                  </div>
+
+                  {/* Resume upload */}
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                      CV uploaden
+                    </label>
+                    <label
+                      className={`flex cursor-pointer items-center gap-3 rounded-lg border border-dashed px-4 py-4 transition-all duration-200 ${
+                        fileName
+                          ? "border-gray-900 bg-gray-50"
+                          : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFile}
+                        className="hidden"
+                      />
+                      {fileName ? (
+                        <>
+                          <FileText className="h-5 w-5 shrink-0 text-gray-900" />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium text-gray-900">
+                              {fileName}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              Klik om te wijzigen
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-5 w-5 shrink-0 text-gray-400" />
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              Klik om je CV te uploaden
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              PDF, DOC of DOCX (max. 10MB)
+                            </p>
+                          </div>
+                        </>
+                      )}
+                    </label>
                   </div>
 
                   <div>
@@ -988,14 +1305,20 @@ function Footer() {
 /* ------------------------------------------------------------------ */
 
 export default function VacaturesPage() {
+  const [applyJob, setApplyJob] = useState<string | null>(null);
+
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
       <Hero />
       <Benefits />
-      <JobListings />
+      <JobListings onApply={(title) => setApplyJob(title)} />
       <ApplicationCTA />
       <Footer />
+
+      {applyJob && (
+        <ApplyModal jobTitle={applyJob} onClose={() => setApplyJob(null)} />
+      )}
     </main>
   );
 }
