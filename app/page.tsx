@@ -182,7 +182,7 @@ const REASONS = [
 
 function Navbar() {
   const [open, setOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("#");
+  const [activeLink, setActiveLink] = useState("");
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white/90 backdrop-blur-xl">
