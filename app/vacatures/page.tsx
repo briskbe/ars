@@ -213,7 +213,7 @@ function Navbar() {
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         scrolled
           ? "border-b border-gray-200/80 bg-white/90 shadow-sm backdrop-blur-xl"
-          : "border-b border-white/10 bg-gray-900/80 backdrop-blur-xl"
+          : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center px-6 lg:px-12">
@@ -316,10 +316,17 @@ function Hero() {
   useEffect(() => setLoaded(true), []);
 
   return (
-    <section className="relative flex min-h-[55vh] items-end overflow-hidden bg-gray-900 pb-20 pt-32 lg:pb-24 lg:pt-40">
-      {/* Dark textured background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.04)_0%,transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(255,255,255,0.03)_0%,transparent_50%)]" />
+    <section className="relative flex min-h-[60vh] items-end overflow-hidden bg-gray-900 pb-20 pt-32 lg:min-h-[55vh] lg:pb-24 lg:pt-40">
+      {/* Background image */}
+      <img
+        src="/vacatures.png"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/60" />
+      {/* Bottom gradient for smooth transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/40 to-transparent" />
 
       <div className="relative mx-auto w-full max-w-7xl px-6 lg:px-12">
         <div
