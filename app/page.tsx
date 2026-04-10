@@ -147,7 +147,7 @@ function Navbar() {
       <div className="container-wide flex h-[72px] items-center px-6 lg:px-12">
         {/* Logo */}
         <a href="#" className="mr-12 flex-shrink-0" onClick={() => setActiveLink("#")}>
-          <img src="/logo.png" alt="ARS Industrial Services" className="h-11 w-auto" />
+          <img src="/logo.png" alt="ARS Industrial Services" className="h-8 w-auto" />
         </a>
 
         {/* Desktop: left nav links */}
@@ -382,7 +382,7 @@ function About() {
               </div>
               {/* Content */}
               <div className="relative flex h-full flex-col items-center justify-center p-12 text-center">
-                <img src="/logo.png" alt="ARS Industrial Services" className="mb-4 h-20 w-auto brightness-0 invert" />
+                <img src="/logo.png" alt="ARS Industrial Services" className="mb-4 h-14 w-auto brightness-0 invert" />
                 <p className="mt-3 max-w-sm text-lg text-gray-400">
                   Vakmanschap, betrouwbaarheid en toewijding sinds dag één
                 </p>
@@ -698,7 +698,7 @@ function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-2">
             <a href="#">
-              <img src="/logo.png" alt="ARS Industrial Services" className="h-12 w-auto" />
+              <img src="/logo.png" alt="ARS Industrial Services" className="h-9 w-auto" />
             </a>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-gray-400">
               Uw betrouwbare partner voor industriële diensten. Van laswerken tot
