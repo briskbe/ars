@@ -328,40 +328,38 @@ function Hero() {
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col justify-end pb-10 pt-32">
         <div className="container-wide px-6 lg:px-12">
-          <div className="max-w-3xl">
-            <p className="animate-fade-in-up text-sm font-semibold uppercase tracking-widest text-white/50">
-              Al meer dan 10 jaar uw partner
-            </p>
+          <p className="animate-fade-in-up text-sm font-semibold uppercase tracking-widest text-white/50">
+            Al meer dan 10 jaar uw partner
+          </p>
 
-            <h1 className="animate-fade-in-up animate-delay-100 mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-              Vakmanschap voor
-              <br />
-              de industrie
-            </h1>
+          <h1 className="animate-fade-in-up animate-delay-100 mt-5 max-w-4xl text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+            Vakmanschap voor
+            <br />
+            de industrie
+          </h1>
 
-            <p className="animate-fade-in-up animate-delay-200 mt-6 max-w-xl text-lg leading-relaxed text-white/50 md:text-xl">
-              Van laswerken tot montage, van onderhoud tot industriële
-              verhuizingen — ARS Metals levert precisie en betrouwbaarheid.
-            </p>
+          <p className="animate-fade-in-up animate-delay-200 mt-6 max-w-xl text-lg leading-relaxed text-white/50 md:text-xl">
+            Van laswerken tot montage, van onderhoud tot industriële
+            verhuizingen — ARS Metals levert precisie en betrouwbaarheid.
+          </p>
 
-            <div className="animate-fade-in-up animate-delay-300 mt-10 flex flex-wrap gap-4">
-              <a
-                href="#diensten"
-                className="group inline-flex items-center gap-2.5 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-gray-900 transition-all duration-200 hover:bg-gray-100"
-              >
-                Bekijk onze diensten
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-7 py-3.5 text-[15px] font-semibold text-white transition-all duration-200 hover:border-white/40 hover:bg-white/5"
-              >
-                Neem contact op
-              </a>
-            </div>
+          <div className="animate-fade-in-up animate-delay-300 mt-10 flex flex-wrap gap-4">
+            <a
+              href="#diensten"
+              className="group inline-flex items-center gap-2.5 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-gray-900 transition-all duration-200 hover:bg-gray-100"
+            >
+              Bekijk onze diensten
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-7 py-3.5 text-[15px] font-semibold text-white transition-all duration-200 hover:border-white/40 hover:bg-white/5"
+            >
+              Neem contact op
+            </a>
           </div>
 
-          {/* Stats — simple row, no glass card theatrics */}
+          {/* Stats */}
           <div className="animate-fade-in-up animate-delay-500 mt-20 border-t border-white/10 pt-8">
             <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
               {STATS.map((stat) => (
