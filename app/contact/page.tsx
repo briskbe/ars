@@ -818,11 +818,18 @@ function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:flex-row">
+        <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-gray-200 pt-8 sm:flex-row">
           <p className="text-sm text-gray-400">
             &copy; {new Date().getFullYear()} ARS Metals. Alle rechten
             voorbehouden.
           </p>
+          <div className="flex items-center gap-2.5 rounded-lg border border-teal-200/60 bg-gradient-to-r from-teal-50/80 to-cyan-50/60 px-4 py-2 shadow-sm">
+            <img src="/vca.png" alt="VCA Certified" className="h-7 w-auto" />
+            <div className="border-l border-teal-200 pl-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-teal-800">Gecertificeerd</p>
+              <p className="text-[10px] text-teal-600">Veiligheid</p>
+            </div>
+          </div>
           <div className="flex items-center gap-6">
             <a
               href="#"
