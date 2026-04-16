@@ -140,13 +140,31 @@ const REASONS = [
 function Navbar() {
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white/90 backdrop-blur-xl">
+    <nav
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        scrolled
+          ? "border-b border-gray-200/80 bg-white/90 backdrop-blur-xl"
+          : "bg-transparent"
+      }`}
+    >
       <div className="container-wide flex h-[72px] items-center px-6 lg:px-12">
         {/* Logo */}
         <a href="#" className="mr-12 flex-shrink-0" onClick={() => setActiveLink("#")}>
-          <img src="/logo.png" alt="ARS Industrial Services" className="h-8 w-auto" />
+          <img
+            src="/logo.png"
+            alt="ARS Industrial Services"
+            className={`h-8 w-auto transition-all duration-300 ${scrolled ? "" : "brightness-0 invert"}`}
+          />
         </a>
 
         {/* Desktop: left nav links */}
@@ -157,22 +175,21 @@ function Navbar() {
               href={link.href}
               onClick={() => setActiveLink(link.href)}
               className={`relative py-1 text-[15px] transition-colors duration-200 ${
-                activeLink === link.href
-                  ? "font-semibold text-black"
-                  : "font-medium text-gray-800 hover:text-black"
+                scrolled
+                  ? activeLink === link.href
+                    ? "font-semibold text-black"
+                    : "font-medium text-gray-800 hover:text-black"
+                  : activeLink === link.href
+                    ? "font-semibold text-white"
+                    : "font-medium text-white/70 hover:text-white"
               }`}
             >
               {link.label}
-              {/* Active underline */}
               <span
-                className={`absolute -bottom-0.5 left-0 h-[2px] bg-black transition-all duration-300 ${
-                  activeLink === link.href ? "w-full" : "w-0"
-                }`}
+                className={`absolute -bottom-0.5 left-0 h-[2px] transition-all duration-300 ${
+                  scrolled ? "bg-black" : "bg-white"
+                } ${activeLink === link.href ? "w-full" : "w-0"}`}
               />
-              {/* Hover underline */}
-              {activeLink !== link.href && (
-                <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-black/40 transition-all duration-300 group-hover:w-full" />
-              )}
             </a>
           ))}
         </div>
@@ -188,22 +205,30 @@ function Navbar() {
               href={link.href}
               onClick={() => setActiveLink(link.href)}
               className={`relative py-1 text-[15px] transition-colors duration-200 ${
-                activeLink === link.href
-                  ? "font-semibold text-black"
-                  : "font-medium text-gray-800 hover:text-black"
+                scrolled
+                  ? activeLink === link.href
+                    ? "font-semibold text-black"
+                    : "font-medium text-gray-800 hover:text-black"
+                  : activeLink === link.href
+                    ? "font-semibold text-white"
+                    : "font-medium text-white/70 hover:text-white"
               }`}
             >
               {link.label}
               <span
-                className={`absolute -bottom-0.5 left-0 h-[2px] bg-black transition-all duration-300 ${
-                  activeLink === link.href ? "w-full" : "w-0"
-                }`}
+                className={`absolute -bottom-0.5 left-0 h-[2px] transition-all duration-300 ${
+                  scrolled ? "bg-black" : "bg-white"
+                } ${activeLink === link.href ? "w-full" : "w-0"}`}
               />
             </a>
           ))}
           <a
             href="/contact"
-            className="rounded-xl bg-black px-6 py-2.5 text-[15px] font-semibold text-white transition-all duration-200 hover:bg-gray-800 active:scale-[0.98]"
+            className={`rounded-xl px-6 py-2.5 text-[15px] font-semibold transition-all duration-300 active:scale-[0.98] ${
+              scrolled
+                ? "bg-black text-white hover:bg-gray-800"
+                : "bg-white text-gray-900 hover:bg-gray-100"
+            }`}
           >
             Contact
           </a>
@@ -212,7 +237,9 @@ function Navbar() {
         {/* Mobile toggle */}
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-50 md:hidden"
+          className={`rounded-lg p-2 transition-colors md:hidden ${
+            scrolled ? "text-gray-600 hover:bg-gray-50" : "text-white hover:bg-white/10"
+          }`}
           aria-label="Menu"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -299,9 +326,8 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-gray-950/40 to-gray-950" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-screen flex-col justify-end px-6 pb-10 pt-32 lg:px-12">
-        <div className="container-wide">
-          {/* Left-aligned hero text — more editorial, less template */}
+      <div className="relative z-10 flex min-h-screen flex-col justify-end pb-10 pt-32">
+        <div className="container-wide px-6 lg:px-12">
           <div className="max-w-3xl">
             <p className="animate-fade-in-up text-sm font-semibold uppercase tracking-widest text-white/50">
               Al meer dan 10 jaar uw partner
