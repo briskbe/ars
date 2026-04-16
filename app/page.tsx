@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Flame,
   Wrench,
@@ -21,7 +21,6 @@ import {
   Award,
   CheckCircle2,
   Star,
-  Sparkles,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -253,186 +252,102 @@ function Navbar() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  HERO PARTICLES CONFIG                                              */
-/* ------------------------------------------------------------------ */
-const PARTICLES = [
-  { size: 3, left: "10%", top: "20%", tx: "60px", ty: "-100px", duration: "7s", delay: "0s" },
-  { size: 2, left: "20%", top: "60%", tx: "-40px", ty: "-80px", duration: "5s", delay: "1s" },
-  { size: 4, left: "70%", top: "30%", tx: "30px", ty: "-140px", duration: "8s", delay: "0.5s" },
-  { size: 2, left: "85%", top: "70%", tx: "-50px", ty: "-90px", duration: "6s", delay: "2s" },
-  { size: 3, left: "50%", top: "80%", tx: "20px", ty: "-110px", duration: "7s", delay: "1.5s" },
-  { size: 2, left: "35%", top: "40%", tx: "-30px", ty: "-70px", duration: "5.5s", delay: "0.8s" },
-  { size: 3, left: "60%", top: "55%", tx: "50px", ty: "-130px", duration: "6.5s", delay: "2.5s" },
-  { size: 2, left: "15%", top: "75%", tx: "40px", ty: "-60px", duration: "7.5s", delay: "3s" },
-  { size: 4, left: "90%", top: "45%", tx: "-60px", ty: "-100px", duration: "8s", delay: "1.2s" },
-  { size: 2, left: "45%", top: "15%", tx: "25px", ty: "-90px", duration: "6s", delay: "0.3s" },
-  { size: 3, left: "75%", top: "85%", tx: "-35px", ty: "-120px", duration: "7s", delay: "1.8s" },
-  { size: 2, left: "5%", top: "50%", tx: "45px", ty: "-75px", duration: "5s", delay: "2.2s" },
-];
-
 function Hero() {
   const heroRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const bgRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!heroRef.current) return;
-    const rect = heroRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    setMousePos({ x, y });
-  }, []);
-
+  /* Single subtle parallax on the background image only — no content jittering */
   useEffect(() => {
     const hero = heroRef.current;
-    if (!hero) return;
-    hero.addEventListener("mousemove", handleMouseMove);
-    return () => hero.removeEventListener("mousemove", handleMouseMove);
-  }, [handleMouseMove]);
+    const bg = bgRef.current;
+    if (!hero || !bg) return;
+
+    let raf = 0;
+    const onMove = (e: MouseEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = hero.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * -6;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * -6;
+        bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+      });
+    };
+
+    hero.addEventListener("mousemove", onMove);
+    return () => {
+      hero.removeEventListener("mousemove", onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
-    <section
-      ref={heroRef}
-      className="relative min-h-screen overflow-hidden bg-black"
-    >
-      {/* Background image with slow zoom */}
+    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-gray-950">
+      {/* Background image — very slow zoom + mouse parallax */}
       <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mousePos.x * -8}px, ${mousePos.y * -8}px) scale(1.08)`,
-          transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
+        ref={bgRef}
+        className="absolute inset-0 scale-105 will-change-transform"
+        style={{ transition: "transform 0.6s ease-out" }}
       >
         <img
           src="/hero.jpg"
           alt=""
-          className="h-full w-full object-cover"
-          style={{ animation: "heroZoom 20s ease-in-out alternate infinite" }}
+          className="hero-bg-image h-full w-full object-cover"
         />
       </div>
 
-      {/* Dark gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
-      {/* Extra bottom fade for seamless transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
-
-      {/* Scan line effect */}
-      <div className="hero-scan-line" />
-
-      {/* Floating particles */}
-      {PARTICLES.map((p, i) => (
-        <div
-          key={i}
-          className="hero-particle"
-          style={{
-            width: p.size,
-            height: p.size,
-            left: p.left,
-            top: p.top,
-            background: "rgba(255, 255, 255, 0.6)",
-            boxShadow: "0 0 6px rgba(255, 255, 255, 0.3)",
-            ["--tx" as string]: p.tx,
-            ["--ty" as string]: p.ty,
-            ["--duration" as string]: p.duration,
-            ["--delay" as string]: p.delay,
-          }}
-        />
-      ))}
-
-      {/* Subtle vignette */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)",
-        }}
-      />
+      {/* Single dark overlay — clean, no stacking */}
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-gray-950/40 to-gray-950" />
 
       {/* Content */}
-      <div
-        ref={contentRef}
-        className="relative z-10 flex min-h-screen flex-col justify-center px-6 pb-32 pt-32 lg:px-12"
-        style={{
-          transform: `translate(${mousePos.x * 4}px, ${mousePos.y * 4}px)`,
-          transition: "transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
-      >
+      <div className="relative z-10 flex min-h-screen flex-col justify-end px-6 pb-10 pt-32 lg:px-12">
         <div className="container-wide">
-          <div className="mx-auto max-w-4xl text-center">
-            {/* Badge */}
-            <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 backdrop-blur-md">
-              <Sparkles className="h-4 w-4 text-white/70" />
-              <span className="text-sm font-medium tracking-wide text-white/80">
-                Al meer dan 10 jaar uw industriële partner
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="animate-fade-in-up animate-delay-100 text-balance text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-              Jouw partner voor
-              <br />
-              <span className="relative inline-block">
-                <span className="relative z-10">industriële diensten</span>
-                <span className="hero-accent-line absolute -bottom-2 left-0 right-0 h-[3px] rounded-full" />
-              </span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="animate-fade-in-up animate-delay-200 mx-auto mt-8 max-w-2xl text-balance text-lg leading-relaxed text-white/60 md:text-xl">
-              Van laswerken tot montage, van onderhoud tot industriële
-              verhuizingen — ARS Metals biedt vakmanschap en betrouwbaarheid
-              voor elk project.
+          {/* Left-aligned hero text — more editorial, less template */}
+          <div className="max-w-3xl">
+            <p className="animate-fade-in-up text-sm font-semibold uppercase tracking-widest text-white/50">
+              Al meer dan 10 jaar uw partner
             </p>
 
-            {/* CTAs */}
-            <div className="animate-fade-in-up animate-delay-300 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <h1 className="animate-fade-in-up animate-delay-100 mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+              Vakmanschap voor
+              <br />
+              de industrie
+            </h1>
+
+            <p className="animate-fade-in-up animate-delay-200 mt-6 max-w-xl text-lg leading-relaxed text-white/50 md:text-xl">
+              Van laswerken tot montage, van onderhoud tot industriële
+              verhuizingen — ARS Metals levert precisie en betrouwbaarheid.
+            </p>
+
+            <div className="animate-fade-in-up animate-delay-300 mt-10 flex flex-wrap gap-4">
               <a
                 href="#diensten"
-                className="group inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-base font-semibold text-black shadow-lg shadow-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-white/20"
+                className="group inline-flex items-center gap-2.5 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-gray-900 transition-all duration-200 hover:bg-gray-100"
               >
-                Onze diensten
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                Bekijk onze diensten
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
               </a>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-7 py-3.5 text-[15px] font-semibold text-white transition-all duration-200 hover:border-white/40 hover:bg-white/5"
               >
-                Contact opnemen
+                Neem contact op
               </a>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Stats bar — glass morphism, pinned at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 lg:px-12">
-        <div className="container-wide">
-          <div className="animate-reveal-up animate-delay-700 mx-auto max-w-5xl">
-            <div className="glass-card rounded-2xl p-1">
-              <div className="grid grid-cols-2 md:grid-cols-4">
-                {STATS.map((stat, i) => (
-                  <div
-                    key={stat.label}
-                    className={`glass-card-hover rounded-xl px-4 py-6 text-center md:px-8 ${
-                      i < STATS.length - 1
-                        ? "border-r border-white/5 md:border-r"
-                        : ""
-                    } ${i < 2 ? "border-b border-white/5 md:border-b-0" : ""}`}
-                  >
-                    <div className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
-                      {stat.value}
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-white/70">
-                      {stat.label}
-                    </div>
-                    <div className="mt-0.5 text-xs text-white/40">
-                      {stat.description}
-                    </div>
+          {/* Stats — simple row, no glass card theatrics */}
+          <div className="animate-fade-in-up animate-delay-500 mt-20 border-t border-white/10 pt-8">
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+              {STATS.map((stat) => (
+                <div key={stat.label}>
+                  <div className="text-2xl font-extrabold tracking-tight text-white md:text-3xl">
+                    {stat.value}
                   </div>
-                ))}
-              </div>
+                  <div className="mt-1 text-sm font-medium text-white/40">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
