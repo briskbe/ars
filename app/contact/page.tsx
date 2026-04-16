@@ -24,7 +24,7 @@ const NAV_LINKS_LEFT = [
   { label: "Homepagina", href: "/" },
   { label: "Diensten", href: "/#diensten" },
   { label: "Realisaties", href: "/#over-ons" },
-  { label: "Over ons", href: "/#waarom" },
+  { label: "Over ons", href: "/over-ons" },
 ];
 
 const NAV_LINKS_RIGHT = [{ label: "Vacatures", href: "/vacatures" }];
@@ -801,7 +801,7 @@ function Footer() {
               {[
                 { label: "Homepagina", href: "/" },
                 { label: "Diensten", href: "/#diensten" },
-                { label: "Over ons", href: "/#waarom" },
+                { label: "Over ons", href: "/over-ons" },
                 { label: "Vacatures", href: "/vacatures" },
                 { label: "Contact", href: "/contact" },
               ].map((item) => (
