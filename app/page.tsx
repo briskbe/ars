@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Flame,
   Wrench,
@@ -253,65 +253,187 @@ function Navbar() {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*  HERO PARTICLES CONFIG                                              */
+/* ------------------------------------------------------------------ */
+const PARTICLES = [
+  { size: 3, left: "10%", top: "20%", tx: "60px", ty: "-100px", duration: "7s", delay: "0s" },
+  { size: 2, left: "20%", top: "60%", tx: "-40px", ty: "-80px", duration: "5s", delay: "1s" },
+  { size: 4, left: "70%", top: "30%", tx: "30px", ty: "-140px", duration: "8s", delay: "0.5s" },
+  { size: 2, left: "85%", top: "70%", tx: "-50px", ty: "-90px", duration: "6s", delay: "2s" },
+  { size: 3, left: "50%", top: "80%", tx: "20px", ty: "-110px", duration: "7s", delay: "1.5s" },
+  { size: 2, left: "35%", top: "40%", tx: "-30px", ty: "-70px", duration: "5.5s", delay: "0.8s" },
+  { size: 3, left: "60%", top: "55%", tx: "50px", ty: "-130px", duration: "6.5s", delay: "2.5s" },
+  { size: 2, left: "15%", top: "75%", tx: "40px", ty: "-60px", duration: "7.5s", delay: "3s" },
+  { size: 4, left: "90%", top: "45%", tx: "-60px", ty: "-100px", duration: "8s", delay: "1.2s" },
+  { size: 2, left: "45%", top: "15%", tx: "25px", ty: "-90px", duration: "6s", delay: "0.3s" },
+  { size: 3, left: "75%", top: "85%", tx: "-35px", ty: "-120px", duration: "7s", delay: "1.8s" },
+  { size: 2, left: "5%", top: "50%", tx: "45px", ty: "-75px", duration: "5s", delay: "2.2s" },
+];
+
 function Hero() {
+  const heroRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMousePos({ x, y });
+  }, []);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    hero.addEventListener("mousemove", handleMouseMove);
+    return () => hero.removeEventListener("mousemove", handleMouseMove);
+  }, [handleMouseMove]);
+
   return (
-    <section className="relative overflow-hidden bg-white pt-20">
-      {/* Background */}
-      <div className="absolute inset-0 grid-bg" />
-      <div className="absolute right-0 top-20 h-[600px] w-[600px] rounded-full bg-gray-100 blur-3xl" />
-      <div className="absolute -left-40 top-60 h-[400px] w-[400px] rounded-full bg-gray-50 blur-3xl" />
+    <section
+      ref={heroRef}
+      className="relative min-h-screen overflow-hidden bg-black"
+    >
+      {/* Background image with slow zoom */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translate(${mousePos.x * -8}px, ${mousePos.y * -8}px) scale(1.08)`,
+          transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <img
+          src="/hero.jpg"
+          alt=""
+          className="h-full w-full object-cover"
+          style={{ animation: "heroZoom 20s ease-in-out alternate infinite" }}
+        />
+      </div>
 
-      <div className="container-wide relative px-6 pb-20 pt-24 md:pb-32 md:pt-32 lg:px-12 lg:pt-40">
-        <div className="mx-auto max-w-4xl text-center">
-          {/* Badge */}
-          <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-5 py-2 text-sm font-medium text-gray-600">
-            <Sparkles className="h-4 w-4" />
-            Al meer dan 10 jaar uw industriële partner
-          </div>
+      {/* Dark gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
+      {/* Extra bottom fade for seamless transition to next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
 
-          {/* Headline */}
-          <h1 className="animate-fade-in-up animate-delay-100 text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-black sm:text-5xl md:text-6xl lg:text-7xl">
-            Jouw partner voor{" "}
-            <span className="underline decoration-gray-300 decoration-[3px] underline-offset-[6px]">
-              industriële diensten
-            </span>
-          </h1>
+      {/* Scan line effect */}
+      <div className="hero-scan-line" />
 
-          {/* Subtitle */}
-          <p className="animate-fade-in-up animate-delay-200 mx-auto mt-8 max-w-2xl text-balance text-lg leading-relaxed text-gray-500 md:text-xl">
-            Van laswerken tot montage, van onderhoud tot industriële
-            verhuizingen — ARS Metals biedt vakmanschap en betrouwbaarheid voor
-            elk project.
-          </p>
+      {/* Floating particles */}
+      {PARTICLES.map((p, i) => (
+        <div
+          key={i}
+          className="hero-particle"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: p.left,
+            top: p.top,
+            background: "rgba(255, 255, 255, 0.6)",
+            boxShadow: "0 0 6px rgba(255, 255, 255, 0.3)",
+            ["--tx" as string]: p.tx,
+            ["--ty" as string]: p.ty,
+            ["--duration" as string]: p.duration,
+            ["--delay" as string]: p.delay,
+          }}
+        />
+      ))}
 
-          {/* CTAs */}
-          <div className="animate-fade-in-up animate-delay-300 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <a href="#diensten" className="btn-primary text-base">
-              Onze diensten
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            <a href="#contact" className="btn-secondary text-base">
-              Contact opnemen
-            </a>
+      {/* Subtle vignette */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)",
+        }}
+      />
+
+      {/* Content */}
+      <div
+        ref={contentRef}
+        className="relative z-10 flex min-h-screen flex-col justify-center px-6 pb-32 pt-32 lg:px-12"
+        style={{
+          transform: `translate(${mousePos.x * 4}px, ${mousePos.y * 4}px)`,
+          transition: "transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <div className="container-wide">
+          <div className="mx-auto max-w-4xl text-center">
+            {/* Badge */}
+            <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 backdrop-blur-md">
+              <Sparkles className="h-4 w-4 text-white/70" />
+              <span className="text-sm font-medium tracking-wide text-white/80">
+                Al meer dan 10 jaar uw industriële partner
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="animate-fade-in-up animate-delay-100 text-balance text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+              Jouw partner voor
+              <br />
+              <span className="relative inline-block">
+                <span className="relative z-10">industriële diensten</span>
+                <span className="hero-accent-line absolute -bottom-2 left-0 right-0 h-[3px] rounded-full" />
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="animate-fade-in-up animate-delay-200 mx-auto mt-8 max-w-2xl text-balance text-lg leading-relaxed text-white/60 md:text-xl">
+              Van laswerken tot montage, van onderhoud tot industriële
+              verhuizingen — ARS Metals biedt vakmanschap en betrouwbaarheid
+              voor elk project.
+            </p>
+
+            {/* CTAs */}
+            <div className="animate-fade-in-up animate-delay-300 mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <a
+                href="#diensten"
+                className="group inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-base font-semibold text-black shadow-lg shadow-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-white/20"
+              >
+                Onze diensten
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/10"
+              >
+                Contact opnemen
+              </a>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Stats bar */}
-        <div className="animate-fade-in-up animate-delay-400 mx-auto mt-20 max-w-5xl rounded-2xl border border-gray-100 bg-white p-2 shadow-xl shadow-gray-100/80">
-          <div className="grid grid-cols-2 divide-x divide-gray-100 md:grid-cols-4">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="px-4 py-6 text-center md:px-8">
-                <div className="text-3xl font-extrabold tracking-tight text-black md:text-4xl">
-                  {stat.value}
-                </div>
-                <div className="mt-1 text-sm font-semibold text-gray-700">
-                  {stat.label}
-                </div>
-                <div className="mt-0.5 text-xs text-gray-400">
-                  {stat.description}
-                </div>
+      {/* Stats bar — glass morphism, pinned at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 lg:px-12">
+        <div className="container-wide">
+          <div className="animate-reveal-up animate-delay-700 mx-auto max-w-5xl">
+            <div className="glass-card rounded-2xl p-1">
+              <div className="grid grid-cols-2 md:grid-cols-4">
+                {STATS.map((stat, i) => (
+                  <div
+                    key={stat.label}
+                    className={`glass-card-hover rounded-xl px-4 py-6 text-center md:px-8 ${
+                      i < STATS.length - 1
+                        ? "border-r border-white/5 md:border-r"
+                        : ""
+                    } ${i < 2 ? "border-b border-white/5 md:border-b-0" : ""}`}
+                  >
+                    <div className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+                      {stat.value}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white/70">
+                      {stat.label}
+                    </div>
+                    <div className="mt-0.5 text-xs text-white/40">
+                      {stat.description}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
