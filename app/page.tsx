@@ -20,7 +20,6 @@ import {
   Clock,
   Award,
   CheckCircle2,
-  Star,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -110,26 +109,35 @@ const STATS = [
   },
 ];
 
-const REASONS = [
+const UNIQUE = [
   {
-    title: "Allround expertise",
+    title: "Correctheid en stiptheid",
     description:
-      "Van laswerk tot montage, van onderhoud tot complete verhuizingen — wij dekken het volledige spectrum van industriële diensten.",
+      "Zodat elk project op tijd en volgens de afgesproken kwaliteitsnormen wordt afgerond.",
+    image: "/hero.jpg",
   },
   {
-    title: "Oplossingsgericht",
-    description:
-      "Geen probleem is te complex. Wij denken mee en bieden pragmatische oplossingen die echt werken op de werkvloer.",
+    title: "Industrieel speler",
+    description: "Bekend om zijn betrouwbare en hoogwaardige oplossingen.",
+    image: "/over.jpg",
   },
   {
-    title: "Betrouwbaar & flexibel",
+    title: "Uitgebreide expertise",
     description:
-      "Afspraak is afspraak. Wij leveren op tijd en passen ons aan wanneer uw planning wijzigt.",
+      "Wij bieden verschillende aspecten en oplossingen aan uw projecten.",
+    image: "/vacatures.png",
   },
   {
-    title: "Veiligheid voorop",
+    title: "Tal van referenties",
     description:
-      "Alle werkzaamheden worden uitgevoerd volgens de strengste veiligheidsnormen met gecertificeerde vakmensen.",
+      "Succesvolle referenties die onze betrouwbaarheid en vakmanschap keer op keer aantonen.",
+    image: "/contact.png",
+  },
+  {
+    title: "Sterk team",
+    description:
+      "Ons sterk team van experts staat garant voor de uitvoering van elk project met de hoogste kwaliteit en precisie.",
+    image: "/hero.jpg",
   },
 ];
 
@@ -525,41 +533,56 @@ function About() {
 }
 
 function WhyARS() {
-  return (
-    <section id="waarom" className="section-padding bg-black text-white">
-      <div className="container-wide">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-300">
-            <Star className="h-3.5 w-3.5" />
-            Waarom ARS Metals
-          </div>
-          <h2 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-            Waarom klanten voor{" "}
-            <span className="underline decoration-gray-600 decoration-[3px] underline-offset-[6px]">
-              ons kiezen
-            </span>
-          </h2>
-          <p className="mt-5 text-lg text-gray-400">
-            Ontdek wat ons onderscheidt van de rest en waarom bedrijven ons keer
-            op keer als partner kiezen.
-          </p>
-        </div>
+  const [featured, ...rest] = UNIQUE;
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2">
-          {REASONS.map((reason, index) => (
-            <div
-              key={reason.title}
-              className="group rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all duration-300 hover:border-white/25 hover:bg-white/10"
-            >
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-gray-300 transition-colors group-hover:bg-white group-hover:text-black">
-                <span className="text-lg font-bold">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <h3 className="text-xl font-bold">{reason.title}</h3>
-              <p className="mt-3 leading-relaxed text-gray-400">
-                {reason.description}
+  return (
+    <section id="waarom" className="section-padding bg-gray-100/70">
+      <div className="container-wide">
+        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+          Wat maakt ons uniek?
+        </h2>
+
+        <div className="mt-12 grid gap-5 lg:grid-cols-3 lg:grid-rows-2">
+          {/* Featured card — spans 2 rows */}
+          <div className="group flex flex-col overflow-hidden rounded-2xl bg-gray-200/60 transition-all duration-300 hover:bg-gray-200 lg:row-span-2">
+            <div className="relative aspect-[4/5] overflow-hidden lg:aspect-auto lg:h-[62%]">
+              <img
+                src={featured.image}
+                alt={featured.title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              />
+            </div>
+            <div className="flex flex-1 flex-col justify-center p-8 md:p-10">
+              <h3 className="text-xl font-bold text-gray-900 md:text-2xl">
+                {featured.title}
+              </h3>
+              <p className="mt-3 leading-relaxed text-gray-600">
+                {featured.description}
               </p>
+            </div>
+          </div>
+
+          {/* Four secondary cards */}
+          {rest.map((item) => (
+            <div
+              key={item.title}
+              className="group flex flex-col overflow-hidden rounded-2xl bg-gray-200/60 transition-all duration-300 hover:bg-gray-200"
+            >
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+              </div>
+              <div className="flex flex-1 flex-col p-7">
+                <h3 className="text-lg font-bold text-gray-900">
+                  {item.title}
+                </h3>
+                <p className="mt-2.5 text-[15px] leading-relaxed text-gray-600">
+                  {item.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
