@@ -11,6 +11,7 @@ interface GradientWaveTextProps {
   children?: React.ReactNode;
   align?: Align;
   className?: string;
+  as?: keyof JSX.IntrinsicElements;
 
   speed?: number;
   paused?: boolean;
@@ -37,6 +38,7 @@ export function GradientWaveText({
   children,
   align = "center",
   className,
+  as: Tag = "div",
 
   speed = 1,
   paused = false,
@@ -227,11 +229,13 @@ export function GradientWaveText({
     [onMouseLeave]
   );
 
+  const Wrapper = Tag as any;
+
   return (
-    <div
+    <Wrapper
       ref={elRef}
       className={cn(
-        "flex w-full h-full items-center",
+        "flex w-full items-center",
         className
       )}
       style={{ justifyContent, "--gi": -25 } as React.CSSProperties}
@@ -264,7 +268,7 @@ export function GradientWaveText({
       >
         {children}
       </span>
-    </div>
+    </Wrapper>
   );
 }
 

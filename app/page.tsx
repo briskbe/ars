@@ -333,14 +333,16 @@ function Hero() {
             Al meer dan 10 jaar uw partner
           </p>
 
-          <h1
+          <GradientWaveText
+            as="h1"
+            align="left"
+            repeat
+            speed={1}
+            bandCount={8}
             className="animate-fade-in-up animate-delay-100 mt-5 max-w-4xl text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
-            style={{ ["--gradient-wave-base" as any]: "rgb(255,255,255)" }}
           >
-            <GradientWaveText align="left" repeat speed={1} bandCount={8}>
-              Vakmanschap voor{"\n"}de industrie
-            </GradientWaveText>
-          </h1>
+            Vakmanschap voor{"\n"}de industrie
+          </GradientWaveText>
 
           <p className="animate-fade-in-up animate-delay-200 mt-6 max-w-xl text-lg leading-relaxed text-white/50 md:text-xl">
             Van laswerken tot montage, van onderhoud tot industriële
