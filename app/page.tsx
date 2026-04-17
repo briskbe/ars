@@ -437,19 +437,18 @@ function Services() {
   );
 }
 
-function About() {
+function AboutUs() {
   return (
     <section id="over-ons" className="section-padding bg-white">
       <div className="container-wide">
+        {/* Company narrative */}
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left — visual */}
           <div className="relative">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
-              {/* Decorative pattern overlay */}
               <div className="absolute inset-0 opacity-[0.07]">
                 <div className="grid-bg h-full w-full" />
               </div>
-              {/* Content */}
               <div className="relative flex h-full flex-col items-center justify-center p-12 text-center">
                 <img src="/logo.png" alt="ARS Industrial Services" className="mb-4 h-14 w-auto brightness-0 invert" />
                 <p className="mt-3 max-w-sm text-lg text-gray-400">
@@ -479,7 +478,6 @@ function About() {
                 </div>
               </div>
             </div>
-            {/* Decorative accent */}
             <div className="absolute -bottom-4 -right-4 -z-10 h-full w-full rounded-2xl bg-gray-100" />
           </div>
 
@@ -496,13 +494,13 @@ function About() {
               ARS Metals is opgericht vanuit een passie voor industrieel
               vakmanschap. Met een team van ervaren specialisten bieden wij een
               allround service die verder gaat dan alleen uitvoering — wij
-              denken mee, adviseren en leveren altijd een resultaat waar we trots
-              op zijn.
+              denken mee, adviseren en leveren altijd een resultaat waar we
+              trots op zijn.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-gray-500">
-              Of het nu gaat om een kleine reparatie of een groot montageproject,
-              bij ARS Metals bent u verzekerd van kwaliteit, veiligheid en een
-              persoonlijke aanpak.
+              Of het nu gaat om een kleine reparatie of een groot
+              montageproject, bij ARS Metals bent u verzekerd van kwaliteit,
+              veiligheid en een persoonlijke aanpak.
             </p>
 
             <div className="mt-8 space-y-4">
@@ -527,49 +525,47 @@ function About() {
             </a>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function WhyARS() {
-  return (
-    <section id="waarom" className="section-padding bg-black text-white">
-      <div className="container-wide">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-300">
-            <Star className="h-3.5 w-3.5" />
-            Waarom ARS Metals
-          </div>
-          <h2 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-            Waarom klanten voor{" "}
-            <span className="underline decoration-gray-600 decoration-[3px] underline-offset-[6px]">
-              ons kiezen
-            </span>
-          </h2>
-          <p className="mt-5 text-lg text-gray-400">
-            Ontdek wat ons onderscheidt van de rest en waarom bedrijven ons keer
-            op keer als partner kiezen.
-          </p>
-        </div>
-
-        <div className="mt-16 grid gap-6 sm:grid-cols-2">
-          {REASONS.map((reason, index) => (
-            <div
-              key={reason.title}
-              className="group rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all duration-300 hover:border-white/25 hover:bg-white/10"
-            >
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-gray-300 transition-colors group-hover:bg-white group-hover:text-black">
-                <span className="text-lg font-bold">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <h3 className="text-xl font-bold">{reason.title}</h3>
-              <p className="mt-3 leading-relaxed text-gray-400">
-                {reason.description}
-              </p>
+        {/* Waarom klanten voor ons kiezen */}
+        <div
+          id="waarom"
+          className="mt-24 border-t border-gray-100 pt-24 lg:mt-32 lg:pt-32"
+        >
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              <Star className="h-3.5 w-3.5" />
+              Waarom ARS Metals
             </div>
-          ))}
+            <h2 className="text-balance text-3xl font-extrabold tracking-tight text-black sm:text-4xl lg:text-5xl">
+              Waarom klanten voor{" "}
+              <span className="underline decoration-gray-300 decoration-[3px] underline-offset-[6px]">
+                ons kiezen
+              </span>
+            </h2>
+            <p className="mt-5 text-lg text-gray-500">
+              Ontdek wat ons onderscheidt van de rest en waarom bedrijven ons
+              keer op keer als partner kiezen.
+            </p>
+          </div>
+
+          <div className="mt-16 grid gap-6 sm:grid-cols-2">
+            {REASONS.map((reason, index) => (
+              <div
+                key={reason.title}
+                className="group rounded-2xl border border-gray-200 bg-gray-50/60 p-8 transition-all duration-300 hover:border-gray-300 hover:bg-white hover:shadow-lg hover:shadow-gray-200/60"
+              >
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors group-hover:bg-black group-hover:text-white">
+                  <span className="text-lg font-bold">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">{reason.title}</h3>
+                <p className="mt-3 leading-relaxed text-gray-500">
+                  {reason.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -859,8 +855,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Services />
-      <About />
-      <WhyARS />
+      <AboutUs />
       <JobsBanner />
       <Contact />
       <Footer />
