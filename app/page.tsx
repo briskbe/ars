@@ -327,7 +327,7 @@ function Hero() {
 
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col justify-end pb-10 pt-32">
-        <div className="container-wide px-6 lg:px-12">
+        <div className="container-wide w-full px-6 lg:px-12">
           <p className="animate-fade-in-up text-sm font-semibold uppercase tracking-widest text-white/50">
             Al meer dan 10 jaar uw partner
           </p>
