@@ -104,7 +104,7 @@ export function GradientWaveText({
 
   const stops = useMemo(() => {
     const arr: string[] = [];
-    const baseColor = "var(--gradient-wave-base, rgb(29,29,31))";
+    const baseColor = "var(--gradient-wave-base, rgb(255,255,255))";
     arr.push(`${baseColor} calc((var(--gi) + 0) * 1%)`);
     for (let i = 0; i < bandCount && i < resolvedColors.length * 2; i++) {
       const color = resolvedColors[i % resolvedColors.length];
@@ -231,7 +231,7 @@ export function GradientWaveText({
     <div
       ref={elRef}
       className={cn(
-        "flex w-full h-full items-center [--gradient-wave-base:rgb(29,29,31)] dark:[--gradient-wave-base:rgb(255,255,255)]",
+        "flex w-full h-full items-center",
         className
       )}
       style={{ justifyContent, "--gi": -25 } as React.CSSProperties}
