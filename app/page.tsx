@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   Star,
 } from "lucide-react";
+import { GradientWaveText } from "@/components/gradient-wave-text";
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -332,10 +333,16 @@ function Hero() {
             Al meer dan 10 jaar uw partner
           </p>
 
-          <h1 className="animate-fade-in-up animate-delay-100 mt-5 max-w-4xl text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-            Vakmanschap voor
-            <br />
-            de industrie
+          <h1 className="animate-fade-in-up animate-delay-100 mt-5 max-w-4xl">
+            <GradientWaveText
+              align="left"
+              repeat
+              radial={false}
+              className="text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl [--gradient-wave-base:rgb(255,255,255)]"
+              customColors={["#60a5fa", "#818cf8", "#a78bfa", "#c084fc", "#f472b6", "#fb7185"]}
+            >
+              {"Vakmanschap voor\nde industrie"}
+            </GradientWaveText>
           </h1>
 
           <p className="animate-fade-in-up animate-delay-200 mt-6 max-w-xl text-lg leading-relaxed text-white/50 md:text-xl">
