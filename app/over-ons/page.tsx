@@ -262,7 +262,7 @@ function Hero() {
     <section className="relative flex min-h-[70vh] items-end overflow-hidden bg-gray-950 pb-20 pt-32 lg:min-h-[65vh] lg:pb-28 lg:pt-40">
       {/* Background image */}
       <img
-        src="/hero.jpg"
+        src="/over.jpg"
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
       />
