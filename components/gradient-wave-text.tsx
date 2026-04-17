@@ -24,6 +24,7 @@ interface GradientWaveTextProps {
   bandGap?: number;
   bandCount?: number;
   customColors?: string[];
+  baseColor?: string;
 
   onClick?: (e: React.MouseEvent) => void;
   onMouseEnter?: (e: React.MouseEvent) => void;
@@ -49,6 +50,7 @@ export function GradientWaveText({
   bandGap = 4,
   bandCount = 8,
   customColors,
+  baseColor,
 
   onClick,
   onMouseEnter,
@@ -103,17 +105,17 @@ export function GradientWaveText({
 
   const stops = useMemo(() => {
     const arr: string[] = [];
-    const baseColor = "var(--gradient-wave-base, rgb(29,29,31))";
-    arr.push(`${baseColor} calc((var(--gi) + 0) * 1%)`);
+    const resolvedBase = baseColor ?? "var(--gradient-wave-base, rgb(29,29,31))";
+    arr.push(`${resolvedBase} calc((var(--gi) + 0) * 1%)`);
     for (let i = 0; i < bandCount && i < resolvedColors.length * 2; i++) {
       const color = resolvedColors[i % resolvedColors.length];
       const offset = (i + 2) * bandGap;
       arr.push(`${color} calc((var(--gi) + ${offset}) * 1%)`);
     }
     const endOffset = (bandCount + 2) * bandGap;
-    arr.push(`${baseColor} calc((var(--gi) + ${endOffset}) * 1%)`);
+    arr.push(`${resolvedBase} calc((var(--gi) + ${endOffset}) * 1%)`);
     return arr.join(", ");
-  }, [resolvedColors, bandGap, bandCount]);
+  }, [resolvedColors, bandGap, bandCount, baseColor]);
 
   const gradient = useMemo(() => {
     return radial

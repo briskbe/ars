@@ -333,13 +333,14 @@ function Hero() {
             Al meer dan 10 jaar uw partner
           </p>
 
-          <h1 className="animate-fade-in-up animate-delay-100 mt-5 max-w-4xl">
+          <h1 className="animate-fade-in-up animate-delay-100 mt-5 w-full">
             <GradientWaveText
               align="left"
               repeat
               radial={false}
-              className="text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl [--gradient-wave-base:rgb(255,255,255)]"
-              customColors={["#60a5fa", "#818cf8", "#a78bfa", "#c084fc", "#f472b6", "#fb7185"]}
+              baseColor="#ffffff"
+              className="w-full text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+              customColors={["#0f172a", "#1e293b", "#334155", "#475569", "#334155", "#1e293b"]}
             >
               {"Vakmanschap voor\nde industrie"}
             </GradientWaveText>
