@@ -21,6 +21,15 @@ import {
   Award,
   CheckCircle2,
   Star,
+  Calendar,
+  Building2,
+  Users,
+  Target,
+  Heart,
+  Sparkles,
+  ShieldCheck,
+  GraduationCap,
+  Handshake,
 } from "lucide-react";
 import { GradientWaveText } from "@/components/gradient-wave-text";
 
@@ -111,26 +120,99 @@ const STATS = [
   },
 ];
 
-const REASONS = [
+const VALUES = [
   {
-    title: "Allround expertise",
+    icon: Award,
+    title: "Vakmanschap",
     description:
-      "Van laswerk tot montage, van onderhoud tot complete verhuizingen — wij dekken het volledige spectrum van industriële diensten.",
+      "Hoogwaardige, op maat gemaakte oplossingen uitgevoerd door ervaren specialisten met oog voor detail.",
   },
   {
-    title: "Oplossingsgericht",
+    icon: ShieldCheck,
+    title: "Veiligheid",
     description:
-      "Geen probleem is te complex. Wij denken mee en bieden pragmatische oplossingen die echt werken op de werkvloer.",
+      "VCA*-gecertificeerd en continu aandacht voor veilig werken op elke werf, voor iedereen.",
   },
   {
-    title: "Betrouwbaar & flexibel",
+    icon: Handshake,
+    title: "Klanttevredenheid",
     description:
-      "Afspraak is afspraak. Wij leveren op tijd en passen ons aan wanneer uw planning wijzigt.",
+      "Wij werken nauw samen met onze klanten om tot optimale resultaten te komen — afspraak is afspraak.",
   },
   {
-    title: "Veiligheid voorop",
+    icon: Target,
+    title: "Efficiëntie",
     description:
-      "Alle werkzaamheden worden uitgevoerd volgens de strengste veiligheidsnormen met gecertificeerde vakmensen.",
+      "Elk project tijdig en binnen budget afgerond, met respect voor uw planning en werkomgeving.",
+  },
+];
+
+const STORY_HIGHLIGHTS = [
+  {
+    icon: Calendar,
+    title: "Opgericht in 2014",
+    description:
+      "Vanuit de ambitie om onze jarenlange kennis verder uit te breiden.",
+  },
+  {
+    icon: Building2,
+    title: "Innovatief en dynamisch",
+    description:
+      "Een breed aanbod aan industriële diensten, steeds op maat.",
+  },
+  {
+    icon: Users,
+    title: "Betrouwbare partner",
+    description:
+      "Voor bedrijven én studiebureaus die specialisten nodig hebben.",
+  },
+];
+
+const TIMELINE = [
+  {
+    year: "2014",
+    title: "Oprichting ARS Metaalwerken",
+    description:
+      "Opgericht vanuit een passie om onze jarenlange kennis en ervaring in de industriële dienstensector verder uit te breiden.",
+  },
+  {
+    year: "2017",
+    title: "Uitbreiding van expertise",
+    description:
+      "Specialisatie in rook- en warmteafvoer, lichtstraten, lichtkoepels en rookschermen — zowel vast als automatisch.",
+  },
+  {
+    year: "2020",
+    title: "VCA*-certificering",
+    description:
+      "Formeel erkend als VCA*-gecertificeerd bedrijf: bewijs van onze structurele aandacht voor veiligheid op de werkvloer.",
+  },
+  {
+    year: "Vandaag",
+    title: "Uw betrouwbare partner",
+    description:
+      "Meer dan 2000 succesvolle projecten later blijven we de ideale partner voor complexe industriële installaties.",
+  },
+];
+
+const SAFETY_POINTS = [
+  {
+    icon: ShieldCheck,
+    title: "VCA*-certificaat",
+    description:
+      "Ons VCA*-certificaat toont aan dat ARS Metaalwerken structureel aandacht besteedt aan veiligheid tijdens het werk.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Opleiding & certificering",
+    description:
+      "Onze preventiedienst ondersteunt ons personeel met de benodigde opleidingen voor het behalen van certificaten.",
+  },
+  {
+    icon: Heart,
+    title: "Welzijn op de werkvloer",
+    description:
+      "Wij hechten voortdurend waarde aan de veiligheid en gezondheid van iedereen op de werf.",
   },
 ];
 
@@ -439,100 +521,85 @@ function Services() {
 
 function AboutUs() {
   return (
-    <section id="over-ons" className="section-padding bg-white">
-      <div className="container-wide">
-        {/* Company narrative */}
-        <div className="grid items-center gap-16 lg:grid-cols-2">
-          {/* Left — visual */}
-          <div className="relative">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
-              <div className="absolute inset-0 opacity-[0.07]">
-                <div className="grid-bg h-full w-full" />
+    <>
+      {/* ---- Ons verhaal ---- */}
+      <section id="over-ons" className="section-padding scroll-mt-20 bg-white">
+        <div className="container-wide">
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+            {/* Left — label, heading, highlights */}
+            <div className="lg:col-span-5">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <Award className="h-3.5 w-3.5" />
+                Ons verhaal
               </div>
-              <div className="relative flex h-full flex-col items-center justify-center p-12 text-center">
-                <img src="/logo.png" alt="ARS Industrial Services" className="mb-4 h-14 w-auto brightness-0 invert" />
-                <p className="mt-3 max-w-sm text-lg text-gray-400">
-                  Vakmanschap, betrouwbaarheid en toewijding sinds dag één
+              <h2 className="text-balance text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+                Wie wij zijn en waar wij voor staan
+              </h2>
+
+              <div className="mt-8 space-y-5">
+                {STORY_HIGHLIGHTS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="flex gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                        <Icon className="h-[18px] w-[18px] text-gray-900" />
+                      </div>
+                      <div>
+                        <h3 className="text-[15px] font-semibold text-gray-900">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right — long-form text */}
+            <div className="lg:col-span-7">
+              <p className="text-base leading-relaxed text-gray-600 sm:text-lg">
+                <span className="font-semibold text-gray-900">
+                  ARS METAALWERKEN
+                </span>{" "}
+                is een innovatief en dynamisch bedrijf, opgericht in 2014, met
+                als doel zijn uitgebreide kennis en ervaring in de industriële
+                dienstensector verder uit te breiden. Wij specialiseren ons in
+                een breed scala aan diensten en zijn trots op onze expertise op
+                het gebied van rook- en warmteafvoer, lichtstraten,
+                lichtkoepels, zowel vaste als automatische rookschermen, evenals
+                industriële montage en laswerken.
+              </p>
+
+              <p className="mt-5 text-base leading-relaxed text-gray-600 sm:text-lg">
+                Met onze jarenlange ervaring leveren wij hoogwaardige, op maat
+                gemaakte oplossingen die voldoen aan de specifieke eisen van
+                elk project. Of u nu een bedrijf bent dat op zoek is naar
+                betrouwbare partners voor complexe installaties, of een
+                studiebureau dat installateurs nodig heeft voor technische en
+                specialistische werkzaamheden — wij bieden de expertise en
+                flexibiliteit die u nodig heeft.
+              </p>
+
+              <div className="mt-8 rounded-xl border-l-4 border-gray-900 bg-gray-50 p-6">
+                <p className="text-base italic leading-relaxed text-gray-700">
+                  &ldquo;Onze focus ligt op kwaliteit, veiligheid en
+                  efficiëntie, waardoor we elk project tijdig en binnen budget
+                  kunnen voltooien.&rdquo;
                 </p>
-                <div className="mt-8 grid grid-cols-3 gap-8">
-                  <div>
-                    <div className="text-2xl font-extrabold text-white">
-                      2000+
-                    </div>
-                    <div className="mt-1 text-xs text-gray-500">Projecten</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-extrabold text-white">
-                      10+
-                    </div>
-                    <div className="mt-1 text-xs text-gray-500">
-                      Jaar actief
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-extrabold text-white">
-                      100%
-                    </div>
-                    <div className="mt-1 text-xs text-gray-500">Inzet</div>
-                  </div>
-                </div>
               </div>
             </div>
-            <div className="absolute -bottom-4 -right-4 -z-10 h-full w-full rounded-2xl bg-gray-100" />
-          </div>
-
-          {/* Right — text */}
-          <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              <Award className="h-3.5 w-3.5" />
-              Over ons
-            </div>
-            <h2 className="text-balance text-3xl font-extrabold tracking-tight text-black sm:text-4xl">
-              Meer dan 10 jaar ervaring in de industriële sector
-            </h2>
-            <p className="mt-6 text-lg leading-relaxed text-gray-500">
-              ARS Metals is opgericht vanuit een passie voor industrieel
-              vakmanschap. Met een team van ervaren specialisten bieden wij een
-              allround service die verder gaat dan alleen uitvoering — wij
-              denken mee, adviseren en leveren altijd een resultaat waar we
-              trots op zijn.
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-gray-500">
-              Of het nu gaat om een kleine reparatie of een groot
-              montageproject, bij ARS Metals bent u verzekerd van kwaliteit,
-              veiligheid en een persoonlijke aanpak.
-            </p>
-
-            <div className="mt-8 space-y-4">
-              {[
-                "Gecertificeerde vakmensen",
-                "Flexibele inzet op locatie",
-                "Korte communicatielijnen",
-                "Altijd binnen afgesproken termijn",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100 text-black">
-                    <CheckCircle2 className="h-4 w-4" strokeWidth={2.5} />
-                  </div>
-                  <span className="font-medium text-gray-700">{item}</span>
-                </div>
-              ))}
-            </div>
-
-            <a href="#contact" className="btn-primary mt-10 inline-flex">
-              Neem contact op
-              <ArrowRight className="h-4 w-4" />
-            </a>
           </div>
         </div>
+      </section>
 
-        {/* Waarom klanten voor ons kiezen */}
-        <div
-          id="waarom"
-          className="mt-24 border-t border-gray-100 pt-24 lg:mt-32 lg:pt-32"
-        >
+      {/* ---- Waarom klanten voor ons kiezen ---- */}
+      <section id="waarom" className="section-padding scroll-mt-20 bg-gray-50/80">
+        <div className="container-wide">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 shadow-sm">
               <Star className="h-3.5 w-3.5" />
               Waarom ARS Metals
             </div>
@@ -542,33 +609,164 @@ function AboutUs() {
                 ons kiezen
               </span>
             </h2>
-            <p className="mt-5 text-lg text-gray-500">
-              Ontdek wat ons onderscheidt van de rest en waarom bedrijven ons
-              keer op keer als partner kiezen.
+            <p className="mt-5 text-balance text-lg text-gray-500">
+              Het bedrijf staat bekend om zijn brede aanbod en de expertise die
+              het klanten biedt — voortkomend uit jarenlange ervaring en een
+              oprechte toewijding aan maatwerk.
             </p>
           </div>
 
-          <div className="mt-16 grid gap-6 sm:grid-cols-2">
-            {REASONS.map((reason, index) => (
-              <div
-                key={reason.title}
-                className="group rounded-2xl border border-gray-200 bg-gray-50/60 p-8 transition-all duration-300 hover:border-gray-300 hover:bg-white hover:shadow-lg hover:shadow-gray-200/60"
-              >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors group-hover:bg-black group-hover:text-white">
-                  <span className="text-lg font-bold">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {VALUES.map((value) => {
+              const Icon = value.icon;
+              return (
+                <div
+                  key={value.title}
+                  className="group rounded-2xl border border-gray-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg hover:shadow-gray-200/60"
+                >
+                  <div className="mb-5 inline-flex rounded-xl bg-gray-100 p-3 text-gray-700 transition-colors group-hover:bg-black group-hover:text-white">
+                    <Icon className="h-6 w-6" strokeWidth={2} />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    {value.title}
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-gray-500">
+                    {value.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">{reason.title}</h3>
-                <p className="mt-3 leading-relaxed text-gray-500">
-                  {reason.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* ---- Timeline ---- */}
+      <section className="section-padding bg-gray-900 text-white">
+        <div className="container-wide">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-300">
+              <Sparkles className="h-3.5 w-3.5" />
+              Ons traject
+            </div>
+            <h2 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Tien jaar bouwen aan vertrouwen
+            </h2>
+            <p className="mt-5 text-balance text-lg text-gray-400">
+              Van oprichting tot één van de meest betrouwbare partners in de
+              sector — een greep uit onze mijlpalen.
+            </p>
+          </div>
+
+          <div className="relative mx-auto mt-14 max-w-5xl">
+            <div className="absolute left-4 top-2 h-[calc(100%-1rem)] w-px bg-white/10 md:left-1/2 md:-translate-x-1/2" />
+
+            <div className="space-y-10">
+              {TIMELINE.map((item, i) => {
+                const isLeft = i % 2 === 0;
+                return (
+                  <div
+                    key={item.year}
+                    className="relative grid gap-6 md:grid-cols-2 md:gap-12"
+                  >
+                    <div className="absolute left-4 top-2 z-10 flex h-3 w-3 -translate-x-1/2 items-center justify-center md:left-1/2">
+                      <div className="h-3 w-3 rounded-full bg-white" />
+                      <div className="absolute h-6 w-6 rounded-full bg-white/20" />
+                    </div>
+
+                    <div
+                      className={`ml-10 md:ml-0 ${
+                        isLeft
+                          ? "md:col-start-1 md:pr-10 md:text-right"
+                          : "md:col-start-2 md:pl-10"
+                      }`}
+                    >
+                      <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/80">
+                        <Sparkles className="h-3 w-3" />
+                        {item.year}
+                      </div>
+                      <h3 className="mt-3 text-xl font-bold">{item.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- Veiligheid & VCA ---- */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+            {/* Left — headline + VCA badge */}
+            <div className="lg:col-span-5">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Veiligheid & gezondheid
+              </div>
+              <h2 className="text-balance text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                Veilig werken — voor iedereen
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-gray-500 sm:text-lg">
+                Als bedrijf hechten wij voortdurend waarde aan veiligheid en
+                gezondheid op de werkvloer. Ons VCA*-certificaat toont aan dat
+                ARS Metaalwerken structureel aandacht besteedt aan veiligheid
+                tijdens het werk.
+              </p>
+
+              <div className="mt-8 flex items-center gap-4 rounded-xl border border-teal-200/70 bg-gradient-to-br from-teal-50 to-cyan-50 p-5 shadow-sm">
+                <img
+                  src="/vca.png"
+                  alt="VCA* Certified"
+                  className="h-14 w-auto shrink-0"
+                />
+                <div className="border-l border-teal-200 pl-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                    VCA* Gecertificeerd
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-gray-900">
+                    Veiligheid, gezondheid en milieu
+                  </p>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    Erkend checklist voor aannemers
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right — safety points */}
+            <div className="lg:col-span-7">
+              <div className="space-y-4">
+                {SAFETY_POINTS.map((point) => {
+                  const Icon = point.icon;
+                  return (
+                    <div
+                      key={point.title}
+                      className="flex gap-5 rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-gray-300 hover:shadow-md"
+                    >
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gray-900 text-white">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold text-gray-900">
+                          {point.title}
+                        </h3>
+                        <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
+                          {point.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 
