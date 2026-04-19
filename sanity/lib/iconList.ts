@@ -1,0 +1,26 @@
+export const ICON_NAMES = [
+  "Flame",
+  "Wrench",
+  "Zap",
+  "Settings",
+  "Truck",
+  "Shield",
+  "Sun",
+  "HardHat",
+  "Phone",
+  "Mail",
+  "MapPin",
+  "Clock",
+  "Award",
+  "CheckCircle2",
+  "Star",
+  "Users",
+  "TrendingUp",
+  "Heart",
+  "Briefcase",
+  "Building2",
+  "FileText",
+  "Upload",
+] as const;
+
+export type IconName = (typeof ICON_NAMES)[number];
