@@ -28,4 +28,15 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
       S.documentTypeListItem("service").title("Diensten"),
       S.documentTypeListItem("vacature").title("Vacatures"),
+      S.divider(),
+      S.listItem()
+        .title("Inbox")
+        .child(
+          S.list()
+            .title("Inbox")
+            .items([
+              S.documentTypeListItem("contactSubmission").title("Contactaanvragen"),
+              S.documentTypeListItem("jobApplication").title("Sollicitaties"),
+            ]),
+        ),
     ]);

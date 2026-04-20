@@ -12,6 +12,8 @@ import { vacature } from "./documents/vacature";
 import { homePage } from "./documents/homePage";
 import { contactPage } from "./documents/contactPage";
 import { vacaturesPage } from "./documents/vacaturesPage";
+import { contactSubmission } from "./documents/contactSubmission";
+import { jobApplication } from "./documents/jobApplication";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   iconField,
@@ -25,4 +27,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   homePage,
   contactPage,
   vacaturesPage,
+  contactSubmission,
+  jobApplication,
 ];

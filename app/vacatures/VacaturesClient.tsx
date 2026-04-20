@@ -183,7 +183,7 @@ function JobCard({
   job: SanityVacature;
   index: number;
   inView: boolean;
-  onApply: (jobTitle: string) => void;
+  onApply: (job: { id: string; title: string }) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const Icon = getIcon(job.icon);
@@ -247,7 +247,7 @@ function JobCard({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onApply(job.title);
+                  onApply({ id: job._id, title: job.title });
                 }}
                 className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800 active:scale-[0.98]"
               >
@@ -263,15 +263,18 @@ function JobCard({
 }
 
 function ApplyModal({
+  jobId,
   jobTitle,
   onClose,
 }: {
+  jobId: string;
   jobTitle: string;
   onClose: () => void;
 }) {
   const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -280,10 +283,26 @@ function ApplyModal({
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formState === "sending") return;
+    setErrorMessage(null);
     setFormState("sending");
-    setTimeout(() => setFormState("sent"), 1800);
+    const formData = new FormData(e.currentTarget);
+    formData.set("kind", "vacancy");
+    formData.set("vacatureId", jobId);
+    formData.set("vacatureTitle", jobTitle);
+    try {
+      const res = await fetch("/api/sollicitatie", { method: "POST", body: formData });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload?.error || "Er ging iets mis. Probeer het opnieuw.");
+      }
+      setFormState("sent");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Er ging iets mis. Probeer het opnieuw.");
+      setFormState("idle");
+    }
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -345,6 +364,8 @@ function ApplyModal({
                   <input
                     required
                     type="text"
+                    name="firstName"
+                    autoComplete="given-name"
                     placeholder="Jan"
                     onFocus={() => setFocusedField("m-firstname")}
                     onBlur={() => setFocusedField(null)}
@@ -360,6 +381,8 @@ function ApplyModal({
                   <input
                     required
                     type="text"
+                    name="lastName"
+                    autoComplete="family-name"
                     placeholder="De Vries"
                     onFocus={() => setFocusedField("m-lastname")}
                     onBlur={() => setFocusedField(null)}
@@ -379,6 +402,8 @@ function ApplyModal({
                   <input
                     required
                     type="email"
+                    name="email"
+                    autoComplete="email"
                     placeholder="jan@voorbeeld.be"
                     onFocus={() => setFocusedField("m-email")}
                     onBlur={() => setFocusedField(null)}
@@ -398,6 +423,8 @@ function ApplyModal({
                   <input
                     required
                     type="tel"
+                    name="phone"
+                    autoComplete="tel"
                     placeholder="+32 (0) 123 45 67 89"
                     onFocus={() => setFocusedField("m-phone")}
                     onBlur={() => setFocusedField(null)}
@@ -422,6 +449,7 @@ function ApplyModal({
                   <input
                     required
                     type="file"
+                    name="cv"
                     accept=".pdf,.doc,.docx"
                     onChange={handleFile}
                     className="hidden"
@@ -456,6 +484,7 @@ function ApplyModal({
                 </label>
                 <textarea
                   rows={3}
+                  name="motivation"
                   placeholder="Vertel kort waarom je interesse hebt in deze functie..."
                   onFocus={() => setFocusedField("m-message")}
                   onBlur={() => setFocusedField(null)}
@@ -464,6 +493,15 @@ function ApplyModal({
                   }`}
                 />
               </div>
+
+              {errorMessage && (
+                <p
+                  role="alert"
+                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {errorMessage}
+                </p>
+              )}
 
               <button
                 type="submit"
@@ -514,7 +552,7 @@ function JobListings({
   page: VacaturesPage;
   internalJobs: SanityVacature[];
   subcontractorJobs: SanityVacature[];
-  onApply: (jobTitle: string) => void;
+  onApply: (job: { id: string; title: string }) => void;
 }) {
   const { ref, inView } = useInView(0.05);
 
@@ -603,11 +641,29 @@ function ApplicationCTA({
   const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formState === "sending") return;
+    setErrorMessage(null);
     setFormState("sending");
-    setTimeout(() => setFormState("sent"), 1800);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.set("kind", "open");
+    try {
+      const res = await fetch("/api/sollicitatie", { method: "POST", body: formData });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload?.error || "Er ging iets mis. Probeer het opnieuw.");
+      }
+      setFormState("sent");
+      setFileName(null);
+      form.reset();
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Er ging iets mis. Probeer het opnieuw.");
+      setFormState("idle");
+    }
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -727,6 +783,8 @@ function ApplicationCTA({
                       <input
                         required
                         type="text"
+                        name="firstName"
+                        autoComplete="given-name"
                         placeholder="Jan"
                         onFocus={() => setFocusedField("firstname")}
                         onBlur={() => setFocusedField(null)}
@@ -742,6 +800,8 @@ function ApplicationCTA({
                       <input
                         required
                         type="text"
+                        name="lastName"
+                        autoComplete="family-name"
                         placeholder="De Vries"
                         onFocus={() => setFocusedField("lastname")}
                         onBlur={() => setFocusedField(null)}
@@ -762,6 +822,8 @@ function ApplicationCTA({
                         <input
                           required
                           type="email"
+                          name="email"
+                          autoComplete="email"
                           placeholder="jan@voorbeeld.be"
                           onFocus={() => setFocusedField("email")}
                           onBlur={() => setFocusedField(null)}
@@ -780,6 +842,8 @@ function ApplicationCTA({
                         <input
                           required
                           type="tel"
+                          name="phone"
+                          autoComplete="tel"
                           placeholder="+32 (0) 123 45 67 89"
                           onFocus={() => setFocusedField("phone")}
                           onBlur={() => setFocusedField(null)}
@@ -797,6 +861,7 @@ function ApplicationCTA({
                     </label>
                     <input
                       type="text"
+                      name="desiredFunction"
                       placeholder="Bv. Industrieel Lasser, RWA Installateur..."
                       onFocus={() => setFocusedField("function")}
                       onBlur={() => setFocusedField(null)}
@@ -819,6 +884,7 @@ function ApplicationCTA({
                     >
                       <input
                         type="file"
+                        name="cv"
                         accept=".pdf,.doc,.docx"
                         onChange={handleFile}
                         className="hidden"
@@ -853,6 +919,7 @@ function ApplicationCTA({
                     </label>
                     <textarea
                       rows={4}
+                      name="motivation"
                       placeholder="Vertel kort iets over jezelf en je ervaring..."
                       onFocus={() => setFocusedField("message")}
                       onBlur={() => setFocusedField(null)}
@@ -861,6 +928,15 @@ function ApplicationCTA({
                       }`}
                     />
                   </div>
+
+                  {errorMessage && (
+                    <p
+                      role="alert"
+                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                    >
+                      {errorMessage}
+                    </p>
+                  )}
 
                   <button
                     type="submit"
@@ -915,7 +991,7 @@ export default function VacaturesClient({
   internalJobs: SanityVacature[];
   subcontractorJobs: SanityVacature[];
 }) {
-  const [applyJob, setApplyJob] = useState<string | null>(null);
+  const [applyJob, setApplyJob] = useState<{ id: string; title: string } | null>(null);
 
   return (
     <main className="min-h-screen bg-white">
@@ -926,12 +1002,18 @@ export default function VacaturesClient({
         page={page}
         internalJobs={internalJobs}
         subcontractorJobs={subcontractorJobs}
-        onApply={(title) => setApplyJob(title)}
+        onApply={(job) => setApplyJob(job)}
       />
       <ApplicationCTA page={page} site={site} />
       <Footer site={site} variant="withContact" />
 
-      {applyJob && <ApplyModal jobTitle={applyJob} onClose={() => setApplyJob(null)} />}
+      {applyJob && (
+        <ApplyModal
+          jobId={applyJob.id}
+          jobTitle={applyJob.title}
+          onClose={() => setApplyJob(null)}
+        />
+      )}
     </main>
   );
 }

@@ -166,11 +166,26 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [serviceOpen, setServiceOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formState === "sending") return;
+    setErrorMessage(null);
     setFormState("sending");
-    setTimeout(() => setFormState("sent"), 1800);
+    const formData = new FormData(e.currentTarget);
+    formData.set("service", selectedService);
+    try {
+      const res = await fetch("/api/contact", { method: "POST", body: formData });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload?.error || "Er ging iets mis. Probeer het opnieuw.");
+      }
+      setFormState("sent");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Er ging iets mis. Probeer het opnieuw.");
+      setFormState("idle");
+    }
   };
 
   const inputBase =
@@ -282,6 +297,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       <input
                         required
                         type="text"
+                        name="firstName"
+                        autoComplete="given-name"
                         placeholder="Jan"
                         onFocus={() => setFocusedField("firstname")}
                         onBlur={() => setFocusedField(null)}
@@ -297,6 +314,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       <input
                         required
                         type="text"
+                        name="lastName"
+                        autoComplete="family-name"
                         placeholder="De Vries"
                         onFocus={() => setFocusedField("lastname")}
                         onBlur={() => setFocusedField(null)}
@@ -315,6 +334,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       <Building2 className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <input
                         type="text"
+                        name="company"
+                        autoComplete="organization"
                         placeholder="Uw bedrijfsnaam"
                         onFocus={() => setFocusedField("company")}
                         onBlur={() => setFocusedField(null)}
@@ -335,6 +356,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                         <input
                           required
                           type="email"
+                          name="email"
+                          autoComplete="email"
                           placeholder="jan@bedrijf.be"
                           onFocus={() => setFocusedField("email")}
                           onBlur={() => setFocusedField(null)}
@@ -353,6 +376,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                         <input
                           required
                           type="tel"
+                          name="phone"
+                          autoComplete="tel"
                           placeholder="+32 (0) 123 45 67 89"
                           onFocus={() => setFocusedField("phone")}
                           onBlur={() => setFocusedField(null)}
@@ -418,6 +443,7 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                     <textarea
                       required
                       rows={5}
+                      name="message"
                       placeholder="Vertel ons over uw project, wensen of vragen..."
                       onFocus={() => setFocusedField("message")}
                       onBlur={() => setFocusedField(null)}
@@ -426,6 +452,15 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       }`}
                     />
                   </div>
+
+                  {errorMessage && (
+                    <p
+                      role="alert"
+                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                    >
+                      {errorMessage}
+                    </p>
+                  )}
 
                   <button
                     type="submit"
