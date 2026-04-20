@@ -417,6 +417,7 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                               <button
                                 key={option}
                                 type="button"
+                                onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => {
                                   setSelectedService(option);
                                   setServiceOpen(false);

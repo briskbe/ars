@@ -111,7 +111,7 @@ async function seedHomePage() {
       "Van laswerken tot montage, van onderhoud tot industriële verhuizingen — ARS Metals levert precisie en betrouwbaarheid.",
     heroCtas: [
       { _key: "c1", label: "Bekijk onze diensten", href: "#diensten", style: "primary" },
-      { _key: "c2", label: "Neem contact op", href: "#contact", style: "secondary" },
+      { _key: "c2", label: "Neem contact op", href: "/contact", style: "secondary" },
     ],
     stats: [
       { _key: "s1", value: "2000+", label: "Succesvolle projecten", description: "Afgerond met precisie" },

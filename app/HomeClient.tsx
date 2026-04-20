@@ -8,10 +8,6 @@ import {
   Award,
   Star,
   HardHat,
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
   CheckCircle2,
 } from "lucide-react";
 import Navbar from "./components/Navbar";
@@ -260,7 +256,7 @@ function About({ page, site }: { page: HomePage; site: SiteSettings | null }) {
               </div>
             )}
 
-            <a href="#contact" className="btn-primary mt-10 inline-flex">
+            <a href="/contact" className="btn-primary mt-10 inline-flex">
               Neem contact op
               <ArrowRight className="h-4 w-4" />
             </a>
@@ -360,120 +356,6 @@ function JobsBanner({ page }: { page: HomePage }) {
   );
 }
 
-function ContactSection({ page, site }: { page: HomePage; site: SiteSettings | null }) {
-  return (
-    <section id="contact" className="section-padding bg-gray-50/80">
-      <div className="container-wide">
-        <div className="grid gap-16 lg:grid-cols-2">
-          <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 shadow-sm">
-              <Mail className="h-3.5 w-3.5" />
-              {page.contactEyebrow ?? "Contact"}
-            </div>
-            <h2 className="text-balance text-3xl font-extrabold tracking-tight text-black sm:text-4xl">
-              {page.contactTitle ?? "Klaar om samen te werken?"}
-            </h2>
-            {page.contactSubtitle && (
-              <p className="mt-5 text-lg leading-relaxed text-gray-500">
-                {page.contactSubtitle}
-              </p>
-            )}
-
-            <div className="mt-10 space-y-6">
-              {site?.phone && (
-                <ContactRow icon={<Phone className="h-5 w-5" />} label="Telefoon" value={site.phone} />
-              )}
-              {site?.email && (
-                <ContactRow icon={<Mail className="h-5 w-5" />} label="E-mail" value={site.email} />
-              )}
-              {(site?.address || site?.addressLine2) && (
-                <ContactRow
-                  icon={<MapPin className="h-5 w-5" />}
-                  label="Adres"
-                  value={[site?.address, site?.addressLine2].filter(Boolean).join(", ")}
-                />
-              )}
-              {site?.hours && (
-                <ContactRow icon={<Clock className="h-5 w-5" />} label="Bereikbaarheid" value={site.hours} />
-              )}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-100/80 md:p-10">
-            <h3 className="text-xl font-bold text-gray-900">Stuur ons een bericht</h3>
-            <p className="mt-2 text-sm text-gray-400">
-              Vul het formulier in en wij nemen zo snel mogelijk contact met u op.
-            </p>
-            <form className="mt-8 space-y-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <FormField label="Voornaam" placeholder="Jan" />
-                <FormField label="Achternaam" placeholder="De Vries" />
-              </div>
-              <FormField label="E-mailadres" placeholder="jan@bedrijf.be" type="email" />
-              <FormField label="Telefoonnummer" placeholder="+32 (0) 123 45 67 89" type="tel" />
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">Bericht</label>
-                <textarea
-                  rows={4}
-                  placeholder="Vertel ons over uw project..."
-                  className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-300 focus:border-black focus:bg-white focus:ring-4 focus:ring-black/5"
-                />
-              </div>
-              <button type="submit" className="btn-primary w-full text-base">
-                Verstuur bericht
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ContactRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-start gap-4">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-black">
-        {icon}
-      </div>
-      <div>
-        <div className="text-sm font-semibold text-gray-400">{label}</div>
-        <div className="mt-1 text-lg font-bold text-gray-900">{value}</div>
-      </div>
-    </div>
-  );
-}
-
-function FormField({
-  label,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-300 focus:border-black focus:bg-white focus:ring-4 focus:ring-black/5"
-      />
-    </div>
-  );
-}
-
 export default function HomeClient({ page, site, services }: Props) {
   return (
     <main className="min-h-screen">
@@ -483,7 +365,6 @@ export default function HomeClient({ page, site, services }: Props) {
       <About page={page} site={site} />
       <WhyARS page={page} />
       <JobsBanner page={page} />
-      <ContactSection page={page} site={site} />
       <Footer site={site} services={services} variant="withServices" />
     </main>
   );
