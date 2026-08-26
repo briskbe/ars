@@ -54,6 +54,33 @@ export const siteSettings = defineType({
       type: "array",
       of: [{ type: "navLink" }],
     }),
+    defineField({
+      name: "whatsappEnabled",
+      title: "WhatsApp-widget tonen",
+      type: "boolean",
+      description: "Toont de zwevende WhatsApp-knop op alle pagina's.",
+      initialValue: true,
+    }),
+    defineField({
+      name: "whatsappNumber",
+      title: "WhatsApp-nummer",
+      type: "string",
+      description:
+        "In internationaal formaat, bv. +32 (0)89 36 77 87. Leeg laten om het telefoonnummer hierboven te gebruiken.",
+    }),
+    defineField({
+      name: "whatsappMessage",
+      title: "WhatsApp — standaardbericht",
+      type: "text",
+      rows: 2,
+      description: "Vooraf ingevuld bericht dat de bezoeker nog kan aanpassen.",
+    }),
+    defineField({
+      name: "whatsappTagline",
+      title: "WhatsApp — responstijd",
+      type: "string",
+      description: "Kleine regel onder de naam in het chatvenster.",
+    }),
     defineField({ name: "vcaCertified", title: "VCA-gecertificeerd tonen", type: "boolean", initialValue: true }),
   ],
   preview: { prepare: () => ({ title: "Site-instellingen" }) },

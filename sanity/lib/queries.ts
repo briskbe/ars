@@ -10,7 +10,8 @@ export const SITE_SETTINGS_QUERY = groq`
     phone, email, address, addressLine2, mapsUrl, mapEmbedUrl,
     hours, hoursNote, footerTagline,
     footerLinks[]{ label, href },
-    vcaCertified
+    vcaCertified,
+    whatsappEnabled, whatsappNumber, whatsappMessage, whatsappTagline
   }
 `;
 
@@ -41,7 +42,8 @@ export const HOME_QUERY = groq`{
     navLeft[]{ label, href },
     navRight[]{ label, href },
     phone, email, address, addressLine2, mapsUrl, hours, hoursNote,
-    footerTagline, footerLinks[]{ label, href }, vcaCertified
+    footerTagline, footerLinks[]{ label, href }, vcaCertified,
+    whatsappEnabled, whatsappNumber, whatsappMessage, whatsappTagline
   },
   "services": *[_type == "service"] | order(order asc){
     _id, title, icon, description
@@ -63,7 +65,8 @@ export const CONTACT_QUERY = groq`{
     navLeft[]{ label, href },
     navRight[]{ label, href },
     phone, email, address, addressLine2, mapsUrl, mapEmbedUrl, hours,
-    footerTagline, footerLinks[]{ label, href }, vcaCertified
+    footerTagline, footerLinks[]{ label, href }, vcaCertified,
+    whatsappEnabled, whatsappNumber, whatsappMessage, whatsappTagline
   }
 }`;
 
@@ -85,7 +88,8 @@ export const VACATURES_QUERY = groq`{
     navLeft[]{ label, href },
     navRight[]{ label, href },
     phone, email, address, addressLine2, mapsUrl, hours,
-    footerTagline, footerLinks[]{ label, href }, vcaCertified
+    footerTagline, footerLinks[]{ label, href }, vcaCertified,
+    whatsappEnabled, whatsappNumber, whatsappMessage, whatsappTagline
   },
   "internalJobs": *[_type == "vacature" && active == true && category == "internal"] | order(order asc){
     _id, title, icon, type, location, description, requirements

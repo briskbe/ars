@@ -28,6 +28,10 @@ export type SiteSettings = {
   hoursNote?: string;
   footerTagline?: string;
   footerLinks?: SanityNavLink[];
+  whatsappEnabled?: boolean;
+  whatsappNumber?: string;
+  whatsappMessage?: string;
+  whatsappTagline?: string;
   vcaCertified?: boolean;
 };
 

@@ -97,6 +97,10 @@ async function seedSiteSettings() {
       { _key: "f3", label: "Vacatures", href: "/vacatures" },
       { _key: "f4", label: "Contact", href: "/contact" },
     ],
+    whatsappEnabled: true,
+    whatsappNumber: "+32 (0)89 36 77 87",
+    whatsappMessage: "Hallo, ik heb een vraag over jullie diensten.",
+    whatsappTagline: "Doorgaans binnen enkele uren een antwoord",
     vcaCertified: true,
   });
 }
