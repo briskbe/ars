@@ -23,6 +23,7 @@ import type {
   SanityService,
   SiteSettings,
 } from "../sanity/lib/types";
+import { useContactForm } from "./components/useContactForm";
 
 type Props = {
   page: HomePage;
@@ -361,6 +362,8 @@ function JobsBanner({ page }: { page: HomePage }) {
 }
 
 function ContactSection({ page, site }: { page: HomePage; site: SiteSettings | null }) {
+  const { values, setField, state, submit, reset } = useContactForm("home");
+
   return (
     <section id="contact" className="section-padding bg-gray-50/80">
       <div className="container-wide">
@@ -400,30 +403,118 @@ function ContactSection({ page, site }: { page: HomePage; site: SiteSettings | n
           </div>
 
           <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-100/80 md:p-10">
-            <h3 className="text-xl font-bold text-gray-900">Stuur ons een bericht</h3>
-            <p className="mt-2 text-sm text-gray-400">
-              Vul het formulier in en wij nemen zo snel mogelijk contact met u op.
-            </p>
-            <form className="mt-8 space-y-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <FormField label="Voornaam" placeholder="Jan" />
-                <FormField label="Achternaam" placeholder="De Vries" />
+            {state === "sent" ? (
+              <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black">
+                  <CheckCircle2 className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="mt-6 text-2xl font-bold text-gray-900">Bericht verzonden</h3>
+                <p className="mt-2 max-w-sm text-gray-500">
+                  Bedankt voor uw bericht. Wij nemen zo snel mogelijk contact met u op.
+                </p>
+                <button
+                  onClick={reset}
+                  className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+                >
+                  Nieuw bericht versturen
+                </button>
               </div>
-              <FormField label="E-mailadres" placeholder="jan@bedrijf.be" type="email" />
-              <FormField label="Telefoonnummer" placeholder="+32 (0) 123 45 67 89" type="tel" />
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">Bericht</label>
-                <textarea
-                  rows={4}
-                  placeholder="Vertel ons over uw project..."
-                  className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-300 focus:border-black focus:bg-white focus:ring-4 focus:ring-black/5"
-                />
-              </div>
-              <button type="submit" className="btn-primary w-full text-base">
-                Verstuur bericht
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-gray-900">Stuur ons een bericht</h3>
+                <p className="mt-2 text-sm text-gray-400">
+                  Vul het formulier in en wij nemen zo snel mogelijk contact met u op.
+                </p>
+                <form onSubmit={submit} className="mt-8 space-y-5">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <FormField
+                      label="Voornaam"
+                      placeholder="Jan"
+                      required
+                      value={values.firstName}
+                      onChange={setField("firstName")}
+                    />
+                    <FormField
+                      label="Achternaam"
+                      placeholder="De Vries"
+                      required
+                      value={values.lastName}
+                      onChange={setField("lastName")}
+                    />
+                  </div>
+                  <FormField
+                    label="E-mailadres"
+                    placeholder="jan@bedrijf.be"
+                    type="email"
+                    required
+                    value={values.email}
+                    onChange={setField("email")}
+                  />
+                  <FormField
+                    label="Telefoonnummer"
+                    placeholder="+32 (0) 123 45 67 89"
+                    type="tel"
+                    required
+                    value={values.phone}
+                    onChange={setField("phone")}
+                  />
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-gray-700">Bericht</label>
+                    <textarea
+                      rows={4}
+                      required
+                      value={values.message}
+                      onChange={(e) => setField("message")(e.target.value)}
+                      placeholder="Vertel ons over uw project..."
+                      className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-300 focus:border-black focus:bg-white focus:ring-4 focus:ring-black/5"
+                    />
+                  </div>
+
+                  {/* Hidden from people, irresistible to bots. */}
+                  <div aria-hidden className="hidden">
+                    <label htmlFor="home-website">Website</label>
+                    <input
+                      id="home-website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={values.website}
+                      onChange={(e) => setField("website")(e.target.value)}
+                    />
+                  </div>
+
+                  {state === "error" && (
+                    <div
+                      role="alert"
+                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                    >
+                      Uw bericht kon niet verzonden worden. Probeer het opnieuw
+                      {site?.phone ? (
+                        <>
+                          {" "}of bel ons op{" "}
+                          <a
+                            href={`tel:${site.phone.replace(/\s+/g, "")}`}
+                            className="font-semibold underline"
+                          >
+                            {site.phone}
+                          </a>
+                        </>
+                      ) : null}
+                      .
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={state === "sending"}
+                    className="btn-primary w-full text-base disabled:opacity-60"
+                  >
+                    {state === "sending" ? "Bericht versturen..." : "Verstuur bericht"}
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </form>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -457,16 +548,25 @@ function FormField({
   label,
   placeholder,
   type = "text",
+  value,
+  onChange,
+  required = false,
 }: {
   label: string;
   placeholder: string;
   type?: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
 }) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
       <input
         type={type}
+        required={required}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-300 focus:border-black focus:bg-white focus:ring-4 focus:ring-black/5"
       />

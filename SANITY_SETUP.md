@@ -95,6 +95,7 @@ Inside `/studio`:
 
 | Section | Document type | What it controls |
 | --- | --- | --- |
+| Postvak — berichten | `submission` (collection) | Alle contactformulier-inzendingen van de site, gesorteerd op nieuw / gelezen / afgehandeld |
 | Site-instellingen | `siteSettings` (singleton) | Logo, navigation, contact details, footer, address, hours, map URLs |
 | Homepagina | `homePage` (singleton) | All sections of `/`: hero copy + image, services intro, about, why-us, jobs banner, contact intro |
 | Contactpagina | `contactPage` (singleton) | All sections of `/contact`: hero, contact cards, form copy, dropdown service options, map header |
@@ -104,6 +105,36 @@ Inside `/studio`:
 
 Icons are picked from a fixed list (lucide-react) — see
 `sanity/lib/iconList.ts` to add more options.
+
+## Contactformulieren → Postvak
+
+Berichten van het contactformulier (op `/contact` en onderaan de homepagina)
+komen binnen in **Postvak — berichten**, bovenaan in het Studio-menu.
+
+- **Nieuw** — nog niet bekeken. Ook berichten zonder status komen hier terecht.
+- **Gelezen** — iemand heeft het gezien, opvolging loopt nog.
+- **Afgehandeld** — klaar.
+- **Alle berichten** — het volledige archief.
+
+Open een bericht en gebruik de knoppen onderaan om de status te wijzigen:
+*Markeer als gelezen*, *Afgehandeld*, *Terug naar nieuw*. Die wijziging is
+meteen actief — er is geen publiceerstap. Onder **Opvolging** staat een veld
+voor interne notities; dat is alleen zichtbaar in de CMS.
+
+Wat de bezoeker invulde staat als alleen-lezen in het document: het is een
+verslag van wat binnenkwam, geen document om aan te passen. Nieuwe berichten
+kunnen niet handmatig aangemaakt worden — ze komen uitsluitend van de site.
+
+### Hoe het technisch werkt
+
+Het formulier post naar `/api/contact` (een Next.js route handler). Die
+valideert de velden en maakt een `submission`-document aan met een
+schrijftoken. Daarvoor is `SANITY_API_WRITE_TOKEN` nodig in de omgeving —
+**ook op Vercel**, niet alleen lokaal. Zonder dat token krijgt de bezoeker een
+foutmelding te zien in plaats van een valse bevestiging.
+
+Het formulier bevat een verborgen honeypot-veld: bots vullen het in, mensen
+zien het niet. Zulke inzendingen worden stilzwijgend genegeerd.
 
 ## Folder layout
 
@@ -120,6 +151,8 @@ sanity/
     queries.ts            # GROQ queries used by pages
     iconList.ts           # whitelist of available icon names
     types.ts              # TypeScript types matching the GROQ shapes
+    writeClient.ts        # write-enabled client, server-side only
+    submissionActions.ts  # "gelezen"/"afgehandeld" buttons in the Studio
   schemas/
     objects/              # reusable inline objects
     documents/            # singletons + collections
@@ -127,6 +160,8 @@ sanity/
 scripts/
   seed-sanity.ts          # one-off seeder (run once after init)
 app/studio/[[...tool]]/   # Next.js route that mounts the Studio
+app/api/contact/route.ts  # receives contact form posts, stores them in Sanity
+app/components/useContactForm.ts  # shared form state for both contact forms
 ```
 
 ## Common tasks
@@ -145,6 +180,9 @@ app/studio/[[...tool]]/   # Next.js route that mounts the Studio
 
 - **"Missing environment variable" at build time**: `.env.local` is not set
   or Vercel envs are missing. The Studio route also needs them.
+- **Formulier geeft een foutmelding**: `SANITY_API_WRITE_TOKEN` ontbreekt of
+  is verlopen. Check de Vercel-omgevingsvariabelen en de serverlogs — bij een
+  mislukte opslag wordt het bericht daar gelogd, zodat het niet verloren gaat.
 - **Studio shows "CORS error"** in production: add your domain to
   sanity.io/manage → API → CORS Origins.
 - **Edits don't appear within 60s**: hard-refresh — the ISR tag is `sanity`

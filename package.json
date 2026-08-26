@@ -12,6 +12,7 @@
     "sanity:deploy": "sanity deploy"
   },
   "dependencies": {
+    "@sanity/icons": "^3.8.0",
     "@sanity/image-url": "^1.2.0",
     "@sanity/locale-nl-nl": "^1.1.35",
     "@sanity/vision": "^3.99.0",

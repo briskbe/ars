@@ -15,6 +15,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getIcon } from "../components/Icon";
 import type { ContactPage, SiteSettings } from "../../sanity/lib/types";
+import { useContactForm } from "../components/useContactForm";
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -162,16 +163,10 @@ function ContactCards({ page }: { page: ContactPage }) {
 
 function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | null }) {
   const { ref, inView } = useInView(0.05);
-  const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [serviceOpen, setServiceOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState("sending");
-    setTimeout(() => setFormState("sent"), 1800);
-  };
+  const { values, setField, state: formState, submit, reset } = useContactForm("contact");
+  const selectedService = values.service;
 
   const inputBase =
     "w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400";
@@ -259,7 +254,7 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                   uiterlijk binnen 48 uur.
                 </p>
                 <button
-                  onClick={() => setFormState("idle")}
+                  onClick={reset}
                   className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
                 >
                   Nieuw bericht versturen
@@ -267,7 +262,7 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
               </div>
             ) : (
               <form
-                onSubmit={handleSubmit}
+                onSubmit={submit}
                 className="rounded-xl border border-gray-200 bg-white p-8 md:p-10"
               >
                 <h3 className="text-lg font-bold text-gray-900">Stuur ons een bericht</h3>
@@ -283,6 +278,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                         required
                         type="text"
                         placeholder="Jan"
+                        value={values.firstName}
+                        onChange={(e) => setField("firstName")(e.target.value)}
                         onFocus={() => setFocusedField("firstname")}
                         onBlur={() => setFocusedField(null)}
                         className={`${inputBase} ${
@@ -298,6 +295,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                         required
                         type="text"
                         placeholder="De Vries"
+                        value={values.lastName}
+                        onChange={(e) => setField("lastName")(e.target.value)}
                         onFocus={() => setFocusedField("lastname")}
                         onBlur={() => setFocusedField(null)}
                         className={`${inputBase} ${
@@ -316,6 +315,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       <input
                         type="text"
                         placeholder="Uw bedrijfsnaam"
+                        value={values.company}
+                        onChange={(e) => setField("company")(e.target.value)}
                         onFocus={() => setFocusedField("company")}
                         onBlur={() => setFocusedField(null)}
                         className={`${inputBase} pl-11 ${
@@ -336,6 +337,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                           required
                           type="email"
                           placeholder="jan@bedrijf.be"
+                          value={values.email}
+                          onChange={(e) => setField("email")(e.target.value)}
                           onFocus={() => setFocusedField("email")}
                           onBlur={() => setFocusedField(null)}
                           className={`${inputBase} pl-11 ${
@@ -354,6 +357,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                           required
                           type="tel"
                           placeholder="+32 (0) 123 45 67 89"
+                          value={values.phone}
+                          onChange={(e) => setField("phone")(e.target.value)}
                           onFocus={() => setFocusedField("phone")}
                           onBlur={() => setFocusedField(null)}
                           className={`${inputBase} pl-11 ${
@@ -393,7 +398,7 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                                 key={option}
                                 type="button"
                                 onClick={() => {
-                                  setSelectedService(option);
+                                  setField("service")(option);
                                   setServiceOpen(false);
                                 }}
                                 className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors ${
@@ -419,6 +424,8 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       required
                       rows={5}
                       placeholder="Vertel ons over uw project, wensen of vragen..."
+                      value={values.message}
+                      onChange={(e) => setField("message")(e.target.value)}
                       onFocus={() => setFocusedField("message")}
                       onBlur={() => setFocusedField(null)}
                       className={`${inputBase} resize-none ${
@@ -426,6 +433,40 @@ function ContactForm({ page, site }: { page: ContactPage; site: SiteSettings | n
                       }`}
                     />
                   </div>
+
+                  {/* Hidden from people, irresistible to bots. */}
+                  <div aria-hidden className="hidden">
+                    <label htmlFor="contact-website">Website</label>
+                    <input
+                      id="contact-website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={values.website}
+                      onChange={(e) => setField("website")(e.target.value)}
+                    />
+                  </div>
+
+                  {formState === "error" && (
+                    <div
+                      role="alert"
+                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                    >
+                      Uw bericht kon niet verzonden worden. Probeer het opnieuw
+                      {site?.phone ? (
+                        <>
+                          {" "}of bel ons op{" "}
+                          <a
+                            href={`tel:${site.phone.replace(/\s+/g, "")}`}
+                            className="font-semibold underline"
+                          >
+                            {site.phone}
+                          </a>
+                        </>
+                      ) : null}
+                      .
+                    </div>
+                  )}
 
                   <button
                     type="submit"
