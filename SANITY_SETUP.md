@@ -96,6 +96,8 @@ Inside `/studio`:
 | Section | Document type | What it controls |
 | --- | --- | --- |
 | Contactformulier — berichten | `submission` (collection) | Alle inzendingen van het contactformulier, gesorteerd op nieuw / gelezen / afgehandeld |
+| Sollicitaties — op een vacature | `application` (collection) | Sollicitaties via de knop *Solliciteren* bij een vacature, met CV |
+| Sollicitaties — spontaan | `application` (collection) | Open sollicitaties via het formulier onderaan de vacaturepagina |
 | Site-instellingen | `siteSettings` (singleton) | Logo, navigation, contact details, footer, address, hours, map URLs |
 | Homepagina | `homePage` (singleton) | All sections of `/`: hero copy + image, services intro, about, why-us, jobs banner, contact intro |
 | Contactpagina | `contactPage` (singleton) | All sections of `/contact`: hero, contact cards, form copy, dropdown service options, map header |
@@ -106,41 +108,65 @@ Inside `/studio`:
 Icons are picked from a fixed list (lucide-react) — see
 `sanity/lib/iconList.ts` to add more options.
 
-## Contactformulieren → berichten
+## De drie postvakken
 
-Berichten van het contactformulier (op `/contact` en onderaan de homepagina)
-komen binnen in **Contactformulier — berichten**, bovenaan in het Studio-menu.
-Elk bericht toont bovenaan **Binnengekomen via** — "Contactformulier —
-contactpagina" of "Contactformulier — homepagina" — zodat altijd duidelijk is
-waar het vandaan komt. In de lijst staat dat ook onder elke naam.
+Alle formulieren op de site komen binnen in de Studio, elk in een eigen
+postvak bovenaan het menu:
 
-- **Nieuw** — nog niet bekeken. Ook berichten zonder status komen hier terecht.
-- **Gelezen** — iemand heeft het gezien, opvolging loopt nog.
-- **Afgehandeld** — klaar.
-- **Alle berichten** — het volledige archief.
+| Postvak | Gevoed door |
+| --- | --- |
+| **Contactformulier — berichten** | het contactformulier op `/contact` én dat onderaan de homepagina |
+| **Sollicitaties — op een vacature** | de knop *Solliciteren* bij een specifieke vacature |
+| **Sollicitaties — spontaan** | het formulier *Open sollicitatie* onderaan `/vacatures` |
+
+Elk document zegt zelf waar het vandaan komt. Bovenaan staat **Binnengekomen
+via** — bijvoorbeeld "Contactformulier — contactpagina" of
+"Sollicitatieformulier — op een specifieke vacature" — en in de lijst staat
+dezelfde herkomst onder elke naam. Bij een sollicitatie op een vacature staat
+daar de functietitel; bij een spontane sollicitatie staat er "Open
+sollicitatie" en of er een CV bij zit.
+
+Elk postvak heeft dezelfde vier weergaven: **Nieuw**, **Gelezen**,
+**Afgehandeld** en **Alle**.
 
 Open een bericht en gebruik de knoppen onderaan om de status te wijzigen:
 *Markeer als gelezen*, *Afgehandeld*, *Terug naar nieuw*. Die wijziging is
 meteen actief — er is geen publiceerstap. Onder **Opvolging** staat een veld
 voor interne notities; dat is alleen zichtbaar in de CMS.
 
-Een bericht definitief wissen kan met **Bericht verwijderen**, in hetzelfde
-knoppenmenu onderaan (klik op het pijltje naast de hoofdknop). Er volgt eerst
-een bevestiging — daarna is het bericht echt weg, zonder prullenbak.
+Definitief wissen kan met **Bericht verwijderen** of **Sollicitatie
+verwijderen**, in hetzelfde knoppenmenu onderaan (klik op het pijltje naast de
+hoofdknop). Er volgt eerst een bevestiging — daarna is het echt weg, zonder
+prullenbak. Bij een sollicitatie verdwijnt ook het CV.
 
 Wat de bezoeker invulde staat als alleen-lezen in het document: het is een
 verslag van wat binnenkwam, geen document om aan te passen. Nieuwe berichten
-kunnen niet handmatig aangemaakt worden — ze komen uitsluitend van de site.
+en sollicitaties kunnen niet handmatig aangemaakt worden — ze komen uitsluitend
+van de site.
+
+### CV's
+
+Een meegestuurd CV staat als bestand in de sollicitatie; klik erop om het te
+openen of te downloaden. Toegestaan zijn PDF, DOC en DOCX tot **4 MB** — die
+grens komt van Vercel, dat grotere uploads weigert voor ze de server bereiken.
+Een te groot bestand wordt al in de browser tegengehouden met een duidelijke
+melding, dus niemand verliest zijn sollicitatie aan een mislukte upload.
+
+Bij een sollicitatie op een vacature is een CV verplicht; bij een spontane
+sollicitatie niet. De vacature wordt ook als titel bewaard, niet alleen als
+verwijzing — zo blijft zichtbaar waarop iemand solliciteerde, ook nadat die
+vacature is ingevuld en verwijderd.
 
 ### Hoe het technisch werkt
 
-Het formulier post naar `/api/contact` (een Next.js route handler). Die
-valideert de velden en maakt een `submission`-document aan met een
-schrijftoken. Daarvoor is `SANITY_API_WRITE_TOKEN` nodig in de omgeving —
+Het contactformulier post naar `/api/contact`, de sollicitatieformulieren naar
+`/api/sollicitatie` (Next.js route handlers). Die valideren de velden, uploaden
+een eventueel CV als bestand naar Sanity en maken een `submission`- of
+`application`-document aan met een schrijftoken. Daarvoor is `SANITY_API_WRITE_TOKEN` nodig in de omgeving —
 **ook op Vercel**, niet alleen lokaal. Zonder dat token krijgt de bezoeker een
 foutmelding te zien in plaats van een valse bevestiging.
 
-Het formulier bevat een verborgen honeypot-veld: bots vullen het in, mensen
+Elk formulier bevat een verborgen honeypot-veld: bots vullen het in, mensen
 zien het niet. Zulke inzendingen worden stilzwijgend genegeerd.
 
 ## Folder layout
@@ -159,7 +185,8 @@ sanity/
     iconList.ts           # whitelist of available icon names
     types.ts              # TypeScript types matching the GROQ shapes
     writeClient.ts        # write-enabled client, server-side only
-    submissionActions.ts  # "gelezen"/"afgehandeld" buttons in the Studio
+    inboxActions.ts       # status + delete buttons for both inbox types
+    formatSubmittedAt.ts  # date formatting shared by the inbox previews
   schemas/
     objects/              # reusable inline objects
     documents/            # singletons + collections
@@ -167,8 +194,10 @@ sanity/
 scripts/
   seed-sanity.ts          # one-off seeder (run once after init)
 app/studio/[[...tool]]/   # Next.js route that mounts the Studio
-app/api/contact/route.ts  # receives contact form posts, stores them in Sanity
-app/components/useContactForm.ts  # shared form state for both contact forms
+app/api/contact/route.ts       # contact form posts -> submission documents
+app/api/sollicitatie/route.ts  # application posts + CV upload -> application documents
+app/components/useContactForm.ts      # shared state for the two contact forms
+app/components/useApplicationForm.ts  # shared state for the two application forms
 ```
 
 ## Common tasks
@@ -190,6 +219,8 @@ app/components/useContactForm.ts  # shared form state for both contact forms
 - **Formulier geeft een foutmelding**: `SANITY_API_WRITE_TOKEN` ontbreekt of
   is verlopen. Check de Vercel-omgevingsvariabelen en de serverlogs — bij een
   mislukte opslag wordt het bericht daar gelogd, zodat het niet verloren gaat.
+- **CV-upload mislukt**: bestanden boven 4 MB worden geweigerd (limiet van
+  Vercel). Alleen PDF, DOC en DOCX zijn toegestaan.
 - **Studio shows "CORS error"** in production: add your domain to
   sanity.io/manage → API → CORS Origins.
 - **Edits don't appear within 60s**: hard-refresh — the ISR tag is `sanity`

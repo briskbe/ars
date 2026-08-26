@@ -4,81 +4,87 @@ import {
   CheckmarkCircleIcon,
   DocumentsIcon,
   EnvelopeIcon,
+  UserIcon,
+  UsersIcon,
 } from "@sanity/icons";
 
 import { apiVersion } from "./env";
 
-const SUBMISSION_ORDERING = [
-  { field: "submittedAt", direction: "desc" as const },
-];
+type S = Parameters<StructureResolver>[0];
 
-/** A filtered view on the submission inbox, newest message first. */
-const inboxList = (
-  S: Parameters<StructureResolver>[0],
-  id: string,
-  title: string,
-  filter: string,
-  icon: React.ComponentType,
-) =>
-  S.listItem()
-    .title(title)
-    .id(id)
-    .icon(icon)
+const NEWEST_FIRST = [{ field: "submittedAt", direction: "desc" as const }];
+
+/**
+ * One inbox: a status-filtered view per state, over whatever GROQ filter
+ * identifies the form the messages came from.
+ */
+const inbox = (
+  S: S,
+  config: { id: string; title: string; icon: React.ComponentType; type: string; filter: string },
+) => {
+  const view = (
+    suffix: string,
+    title: string,
+    statusFilter: string,
+    icon: React.ComponentType,
+  ) =>
+    S.listItem()
+      .title(title)
+      .id(`${config.id}-${suffix}`)
+      .icon(icon)
+      .child(
+        S.documentList()
+          .title(`${config.title} — ${title.toLowerCase()}`)
+          .apiVersion(apiVersion)
+          .filter(`${config.filter}${statusFilter}`)
+          .defaultOrdering(NEWEST_FIRST)
+          .canHandleIntent(
+            (intent, params) => intent === "edit" && params.type === config.type,
+          ),
+      );
+
+  return S.listItem()
+    .title(config.title)
+    .id(config.id)
+    .icon(config.icon)
     .child(
-      S.documentList()
-        .title(title)
-        .apiVersion(apiVersion)
-        .filter(filter)
-        .defaultOrdering(SUBMISSION_ORDERING)
-        .canHandleIntent(
-          (intent, params) =>
-            intent === "edit" && params.type === "submission",
-        ),
+      S.list()
+        .title(config.title)
+        .items([
+          view("new", "Nieuw", ' && (!defined(status) || status == "new")', EnvelopeIcon),
+          view("read", "Gelezen", ' && status == "read"', CheckmarkCircleIcon),
+          view("done", "Afgehandeld", ' && status == "done"', ArchiveIcon),
+          S.divider(),
+          view("all", "Alle", "", DocumentsIcon),
+        ]),
     );
+};
 
 export const structure: StructureResolver = (S) =>
   S.list()
     .title("Inhoud")
     .items([
-      S.listItem()
-        .title("Contactformulier — berichten")
-        .id("inbox")
-        .icon(EnvelopeIcon)
-        .child(
-          S.list()
-            .title("Berichten van het contactformulier")
-            .items([
-              inboxList(
-                S,
-                "inbox-new",
-                "Nieuw",
-                '_type == "submission" && (!defined(status) || status == "new")',
-                EnvelopeIcon,
-              ),
-              inboxList(
-                S,
-                "inbox-read",
-                "Gelezen",
-                '_type == "submission" && status == "read"',
-                CheckmarkCircleIcon,
-              ),
-              inboxList(
-                S,
-                "inbox-done",
-                "Afgehandeld",
-                '_type == "submission" && status == "done"',
-                ArchiveIcon,
-              ),
-              S.divider(),
-              inboxList(
-                S,
-                "inbox-all",
-                "Alle berichten",
-                '_type == "submission"',
-                DocumentsIcon,
-              ),
-            ]),
-        ),
+      inbox(S, {
+        id: "inbox-contact",
+        title: "Contactformulier — berichten",
+        icon: EnvelopeIcon,
+        type: "submission",
+        filter: '_type == "submission"',
+      }),
+      inbox(S, {
+        id: "inbox-vacature",
+        title: "Sollicitaties — op een vacature",
+        icon: UserIcon,
+        type: "application",
+        filter: '_type == "application" && kind == "vacature"',
+      }),
+      inbox(S, {
+        id: "inbox-open",
+        title: "Sollicitaties — spontaan",
+        icon: UsersIcon,
+        type: "application",
+        filter: '_type == "application" && kind == "open"',
+      }),
       S.divider(),
       S.listItem()
         .title("Site-instellingen")

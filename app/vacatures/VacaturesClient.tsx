@@ -21,6 +21,10 @@ import type {
   VacaturesPage,
   SanityVacature,
 } from "../../sanity/lib/types";
+import {
+  useApplicationForm,
+  MAX_CV_LABEL,
+} from "../components/useApplicationForm";
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -183,7 +187,7 @@ function JobCard({
   job: SanityVacature;
   index: number;
   inView: boolean;
-  onApply: (jobTitle: string) => void;
+  onApply: (job: SanityVacature) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const Icon = getIcon(job.icon);
@@ -247,7 +251,7 @@ function JobCard({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onApply(job.title);
+                  onApply(job);
                 }}
                 className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800 active:scale-[0.98]"
               >
@@ -263,15 +267,23 @@ function JobCard({
 }
 
 function ApplyModal({
-  jobTitle,
+  job,
   onClose,
 }: {
-  jobTitle: string;
+  job: SanityVacature;
   onClose: () => void;
 }) {
-  const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const {
+    values,
+    setField,
+    file,
+    selectFile,
+    state: formState,
+    error,
+    submit,
+  } = useApplicationForm("vacature", { id: job._id, title: job.title });
+  const jobTitle = job.title;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -279,17 +291,6 @@ function ApplyModal({
       document.body.style.overflow = "";
     };
   }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState("sending");
-    setTimeout(() => setFormState("sent"), 1800);
-  };
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFileName(file ? file.name : null);
-  };
 
   const inputBase =
     "w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400";
@@ -335,7 +336,7 @@ function ApplyModal({
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="px-6 py-6 sm:px-8">
+          <form onSubmit={submit} className="px-6 py-6 sm:px-8">
             <div className="space-y-5">
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
@@ -346,6 +347,8 @@ function ApplyModal({
                     required
                     type="text"
                     placeholder="Jan"
+                    value={values.firstName}
+                    onChange={(e) => setField("firstName")(e.target.value)}
                     onFocus={() => setFocusedField("m-firstname")}
                     onBlur={() => setFocusedField(null)}
                     className={`${inputBase} ${
@@ -361,6 +364,8 @@ function ApplyModal({
                     required
                     type="text"
                     placeholder="De Vries"
+                    value={values.lastName}
+                    onChange={(e) => setField("lastName")(e.target.value)}
                     onFocus={() => setFocusedField("m-lastname")}
                     onBlur={() => setFocusedField(null)}
                     className={`${inputBase} ${
@@ -380,6 +385,8 @@ function ApplyModal({
                     required
                     type="email"
                     placeholder="jan@voorbeeld.be"
+                    value={values.email}
+                    onChange={(e) => setField("email")(e.target.value)}
                     onFocus={() => setFocusedField("m-email")}
                     onBlur={() => setFocusedField(null)}
                     className={`${inputBase} pl-11 ${
@@ -399,6 +406,8 @@ function ApplyModal({
                     required
                     type="tel"
                     placeholder="+32 (0) 123 45 67 89"
+                    value={values.phone}
+                    onChange={(e) => setField("phone")(e.target.value)}
                     onFocus={() => setFocusedField("m-phone")}
                     onBlur={() => setFocusedField(null)}
                     className={`${inputBase} pl-11 ${
@@ -414,7 +423,7 @@ function ApplyModal({
                 </label>
                 <label
                   className={`flex cursor-pointer items-center gap-3 rounded-lg border border-dashed px-4 py-4 transition-all duration-200 ${
-                    fileName
+                    file
                       ? "border-gray-900 bg-gray-50"
                       : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
                   }`}
@@ -423,15 +432,15 @@ function ApplyModal({
                     required
                     type="file"
                     accept=".pdf,.doc,.docx"
-                    onChange={handleFile}
+                    onChange={(e) => selectFile(e.target.files?.[0] ?? null)}
                     className="hidden"
                   />
-                  {fileName ? (
+                  {file ? (
                     <>
                       <FileText className="h-5 w-5 shrink-0 text-gray-900" />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-gray-900">
-                          {fileName}
+                          {file.name}
                         </p>
                         <p className="text-xs text-gray-400">Klik om te wijzigen</p>
                       </div>
@@ -443,7 +452,9 @@ function ApplyModal({
                         <p className="text-sm font-medium text-gray-600">
                           Klik om je CV te uploaden
                         </p>
-                        <p className="text-xs text-gray-400">PDF, DOC of DOCX (max. 10MB)</p>
+                        <p className="text-xs text-gray-400">
+                          PDF, DOC of DOCX ({MAX_CV_LABEL})
+                        </p>
                       </div>
                     </>
                   )}
@@ -457,6 +468,8 @@ function ApplyModal({
                 <textarea
                   rows={3}
                   placeholder="Vertel kort waarom je interesse hebt in deze functie..."
+                  value={values.motivation}
+                  onChange={(e) => setField("motivation")(e.target.value)}
                   onFocus={() => setFocusedField("m-message")}
                   onBlur={() => setFocusedField(null)}
                   className={`${inputBase} resize-none ${
@@ -464,6 +477,29 @@ function ApplyModal({
                   }`}
                 />
               </div>
+
+              {/* Hidden from people, irresistible to bots. */}
+              <div aria-hidden className="hidden">
+                <label htmlFor="apply-website">Website</label>
+                <input
+                  id="apply-website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={values.website}
+                  onChange={(e) => setField("website")(e.target.value)}
+                />
+              </div>
+
+              {formState === "error" && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                >
+                  {error ??
+                    "Je sollicitatie kon niet verzonden worden. Probeer het opnieuw."}
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -514,7 +550,7 @@ function JobListings({
   page: VacaturesPage;
   internalJobs: SanityVacature[];
   subcontractorJobs: SanityVacature[];
-  onApply: (jobTitle: string) => void;
+  onApply: (job: SanityVacature) => void;
 }) {
   const { ref, inView } = useInView(0.05);
 
@@ -600,20 +636,17 @@ function ApplicationCTA({
   site: SiteSettings | null;
 }) {
   const { ref, inView } = useInView(0.1);
-  const [formState, setFormState] = useState<"idle" | "sending" | "sent">("idle");
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState("sending");
-    setTimeout(() => setFormState("sent"), 1800);
-  };
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFileName(file ? file.name : null);
-  };
+  const {
+    values,
+    setField,
+    file,
+    selectFile,
+    state: formState,
+    error,
+    submit,
+    reset,
+  } = useApplicationForm("open");
 
   const inputBase =
     "w-full rounded-lg border bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400";
@@ -705,14 +738,14 @@ function ApplicationCTA({
                   Bedankt voor je interesse in ARS. Wij nemen zo snel mogelijk contact met je op.
                 </p>
                 <button
-                  onClick={() => setFormState("idle")}
+                  onClick={reset}
                   className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
                 >
                   Nieuwe sollicitatie
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 bg-white p-8 md:p-10">
+              <form onSubmit={submit} className="rounded-xl border border-gray-200 bg-white p-8 md:p-10">
                 <h3 className="text-lg font-bold text-gray-900">Open sollicitatie</h3>
                 <p className="mt-1 text-sm text-gray-400">
                   Staat jouw functie er niet bij? Solliciteer hier spontaan
@@ -728,6 +761,8 @@ function ApplicationCTA({
                         required
                         type="text"
                         placeholder="Jan"
+                        value={values.firstName}
+                        onChange={(e) => setField("firstName")(e.target.value)}
                         onFocus={() => setFocusedField("firstname")}
                         onBlur={() => setFocusedField(null)}
                         className={`${inputBase} ${
@@ -743,6 +778,8 @@ function ApplicationCTA({
                         required
                         type="text"
                         placeholder="De Vries"
+                        value={values.lastName}
+                        onChange={(e) => setField("lastName")(e.target.value)}
                         onFocus={() => setFocusedField("lastname")}
                         onBlur={() => setFocusedField(null)}
                         className={`${inputBase} ${
@@ -763,6 +800,8 @@ function ApplicationCTA({
                           required
                           type="email"
                           placeholder="jan@voorbeeld.be"
+                          value={values.email}
+                          onChange={(e) => setField("email")(e.target.value)}
                           onFocus={() => setFocusedField("email")}
                           onBlur={() => setFocusedField(null)}
                           className={`${inputBase} pl-11 ${
@@ -781,6 +820,8 @@ function ApplicationCTA({
                           required
                           type="tel"
                           placeholder="+32 (0) 123 45 67 89"
+                          value={values.phone}
+                          onChange={(e) => setField("phone")(e.target.value)}
                           onFocus={() => setFocusedField("phone")}
                           onBlur={() => setFocusedField(null)}
                           className={`${inputBase} pl-11 ${
@@ -798,6 +839,8 @@ function ApplicationCTA({
                     <input
                       type="text"
                       placeholder="Bv. Industrieel Lasser, RWA Installateur..."
+                      value={values.desiredRole}
+                      onChange={(e) => setField("desiredRole")(e.target.value)}
                       onFocus={() => setFocusedField("function")}
                       onBlur={() => setFocusedField(null)}
                       className={`${inputBase} ${
@@ -812,7 +855,7 @@ function ApplicationCTA({
                     </label>
                     <label
                       className={`flex cursor-pointer items-center gap-3 rounded-lg border border-dashed px-4 py-4 transition-all duration-200 ${
-                        fileName
+                        file
                           ? "border-gray-900 bg-gray-50"
                           : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
                       }`}
@@ -820,15 +863,15 @@ function ApplicationCTA({
                       <input
                         type="file"
                         accept=".pdf,.doc,.docx"
-                        onChange={handleFile}
+                        onChange={(e) => selectFile(e.target.files?.[0] ?? null)}
                         className="hidden"
                       />
-                      {fileName ? (
+                      {file ? (
                         <>
                           <FileText className="h-5 w-5 shrink-0 text-gray-900" />
                           <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-medium text-gray-900">
-                              {fileName}
+                              {file.name}
                             </p>
                             <p className="text-xs text-gray-400">Klik om te wijzigen</p>
                           </div>
@@ -840,7 +883,9 @@ function ApplicationCTA({
                             <p className="text-sm font-medium text-gray-600">
                               Klik om je CV te uploaden
                             </p>
-                            <p className="text-xs text-gray-400">PDF, DOC of DOCX (max. 10MB)</p>
+                            <p className="text-xs text-gray-400">
+                          PDF, DOC of DOCX ({MAX_CV_LABEL})
+                        </p>
                           </div>
                         </>
                       )}
@@ -854,6 +899,8 @@ function ApplicationCTA({
                     <textarea
                       rows={4}
                       placeholder="Vertel kort iets over jezelf en je ervaring..."
+                      value={values.motivation}
+                      onChange={(e) => setField("motivation")(e.target.value)}
                       onFocus={() => setFocusedField("message")}
                       onBlur={() => setFocusedField(null)}
                       className={`${inputBase} resize-none ${
@@ -861,6 +908,41 @@ function ApplicationCTA({
                       }`}
                     />
                   </div>
+
+                  {/* Hidden from people, irresistible to bots. */}
+                  <div aria-hidden className="hidden">
+                    <label htmlFor="open-website">Website</label>
+                    <input
+                      id="open-website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={values.website}
+                      onChange={(e) => setField("website")(e.target.value)}
+                    />
+                  </div>
+
+                  {formState === "error" && (
+                    <div
+                      role="alert"
+                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+                    >
+                      {error ??
+                        "Je sollicitatie kon niet verzonden worden. Probeer het opnieuw"}
+                      {!error && site?.phone ? (
+                        <>
+                          {" "}of bel ons op{" "}
+                          <a
+                            href={`tel:${site.phone.replace(/\s+/g, "")}`}
+                            className="font-semibold underline"
+                          >
+                            {site.phone}
+                          </a>
+                        </>
+                      ) : null}
+                      {!error ? "." : ""}
+                    </div>
+                  )}
 
                   <button
                     type="submit"
@@ -915,7 +997,7 @@ export default function VacaturesClient({
   internalJobs: SanityVacature[];
   subcontractorJobs: SanityVacature[];
 }) {
-  const [applyJob, setApplyJob] = useState<string | null>(null);
+  const [applyJob, setApplyJob] = useState<SanityVacature | null>(null);
 
   return (
     <main className="min-h-screen bg-white">
@@ -926,12 +1008,12 @@ export default function VacaturesClient({
         page={page}
         internalJobs={internalJobs}
         subcontractorJobs={subcontractorJobs}
-        onApply={(title) => setApplyJob(title)}
+        onApply={(job) => setApplyJob(job)}
       />
       <ApplicationCTA page={page} site={site} />
       <Footer site={site} variant="withContact" />
 
-      {applyJob && <ApplyModal jobTitle={applyJob} onClose={() => setApplyJob(null)} />}
+      {applyJob && <ApplyModal job={applyJob} onClose={() => setApplyJob(null)} />}
     </main>
   );
 }

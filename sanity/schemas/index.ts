@@ -13,6 +13,7 @@ import { homePage } from "./documents/homePage";
 import { contactPage } from "./documents/contactPage";
 import { vacaturesPage } from "./documents/vacaturesPage";
 import { submission } from "./documents/submission";
+import { application } from "./documents/application";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   iconField,
@@ -27,4 +28,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   contactPage,
   vacaturesPage,
   submission,
+  application,
 ];

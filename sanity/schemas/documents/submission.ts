@@ -1,6 +1,8 @@
 import { defineType, defineField } from "sanity";
 import { EnvelopeIcon } from "@sanity/icons";
 
+import { formatSubmittedAt } from "../../lib/formatSubmittedAt";
+
 /**
  * A message sent through one of the website's contact forms.
  *
@@ -149,7 +151,7 @@ export const submission = defineType({
         // alike, "Contactformulier" is the thing that says what this is.
         subtitle: [
           `Contactformulier · ${source === "home" ? "homepagina" : "contactpagina"}`,
-          formatDate(submittedAt),
+          formatSubmittedAt(submittedAt),
           service,
         ]
           .filter(Boolean)
@@ -159,15 +161,3 @@ export const submission = defineType({
     },
   },
 });
-
-function formatDate(value?: string): string {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("nl-BE", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
