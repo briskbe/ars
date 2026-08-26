@@ -95,7 +95,7 @@ Inside `/studio`:
 
 | Section | Document type | What it controls |
 | --- | --- | --- |
-| Postvak — berichten | `submission` (collection) | Alle contactformulier-inzendingen van de site, gesorteerd op nieuw / gelezen / afgehandeld |
+| Contactformulier — berichten | `submission` (collection) | Alle inzendingen van het contactformulier, gesorteerd op nieuw / gelezen / afgehandeld |
 | Site-instellingen | `siteSettings` (singleton) | Logo, navigation, contact details, footer, address, hours, map URLs |
 | Homepagina | `homePage` (singleton) | All sections of `/`: hero copy + image, services intro, about, why-us, jobs banner, contact intro |
 | Contactpagina | `contactPage` (singleton) | All sections of `/contact`: hero, contact cards, form copy, dropdown service options, map header |
@@ -106,10 +106,13 @@ Inside `/studio`:
 Icons are picked from a fixed list (lucide-react) — see
 `sanity/lib/iconList.ts` to add more options.
 
-## Contactformulieren → Postvak
+## Contactformulieren → berichten
 
 Berichten van het contactformulier (op `/contact` en onderaan de homepagina)
-komen binnen in **Postvak — berichten**, bovenaan in het Studio-menu.
+komen binnen in **Contactformulier — berichten**, bovenaan in het Studio-menu.
+Elk bericht toont bovenaan **Binnengekomen via** — "Contactformulier —
+contactpagina" of "Contactformulier — homepagina" — zodat altijd duidelijk is
+waar het vandaan komt. In de lijst staat dat ook onder elke naam.
 
 - **Nieuw** — nog niet bekeken. Ook berichten zonder status komen hier terecht.
 - **Gelezen** — iemand heeft het gezien, opvolging loopt nog.
@@ -120,6 +123,10 @@ Open een bericht en gebruik de knoppen onderaan om de status te wijzigen:
 *Markeer als gelezen*, *Afgehandeld*, *Terug naar nieuw*. Die wijziging is
 meteen actief — er is geen publiceerstap. Onder **Opvolging** staat een veld
 voor interne notities; dat is alleen zichtbaar in de CMS.
+
+Een bericht definitief wissen kan met **Bericht verwijderen**, in hetzelfde
+knoppenmenu onderaan (klik op het pijltje naast de hoofdknop). Er volgt eerst
+een bevestiging — daarna is het bericht echt weg, zonder prullenbak.
 
 Wat de bezoeker invulde staat als alleen-lezen in het document: het is een
 verslag van wat binnenkwam, geen document om aan te passen. Nieuwe berichten

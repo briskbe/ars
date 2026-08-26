@@ -2,7 +2,7 @@ import { defineType, defineField } from "sanity";
 import { EnvelopeIcon } from "@sanity/icons";
 
 /**
- * A contact form submission from the website.
+ * A message sent through one of the website's contact forms.
  *
  * `liveEdit` is on so the inbox behaves like an inbox: marking a message read
  * or archiving it takes effect immediately instead of leaving a draft that
@@ -12,7 +12,7 @@ import { EnvelopeIcon } from "@sanity/icons";
  */
 export const submission = defineType({
   name: "submission",
-  title: "Bericht",
+  title: "Contactformulier-bericht",
   type: "document",
   icon: EnvelopeIcon,
   liveEdit: true,
@@ -44,6 +44,21 @@ export const submission = defineType({
       group: "internal",
       description:
         "Alleen zichtbaar in de CMS — de afzender ziet dit niet. Bijvoorbeeld wie opvolgt of wat er afgesproken is.",
+    }),
+    defineField({
+      name: "source",
+      title: "Binnengekomen via",
+      type: "string",
+      group: "message",
+      readOnly: true,
+      description:
+        "Dit bericht is door een bezoeker verstuurd via het contactformulier op de website.",
+      options: {
+        list: [
+          { title: "Contactformulier — contactpagina", value: "contact" },
+          { title: "Contactformulier — homepagina", value: "home" },
+        ],
+      },
     }),
     defineField({
       name: "firstName",
@@ -102,19 +117,6 @@ export const submission = defineType({
       group: "message",
       readOnly: true,
     }),
-    defineField({
-      name: "source",
-      title: "Verstuurd via",
-      type: "string",
-      group: "message",
-      readOnly: true,
-      options: {
-        list: [
-          { title: "Contactpagina", value: "contact" },
-          { title: "Homepagina", value: "home" },
-        ],
-      },
-    }),
   ],
   orderings: [
     {
@@ -134,16 +136,22 @@ export const submission = defineType({
       lastName: "lastName",
       company: "company",
       service: "service",
-      message: "message",
       submittedAt: "submittedAt",
       status: "status",
+      source: "source",
     },
-    prepare({ firstName, lastName, company, service, message, submittedAt, status }) {
+    prepare({ firstName, lastName, company, service, submittedAt, status, source }) {
       const name = [firstName, lastName].filter(Boolean).join(" ") || "Naamloos";
       const dot = status === "new" ? "● " : "";
       return {
         title: `${dot}${name}${company ? ` — ${company}` : ""}`,
-        subtitle: [formatDate(submittedAt), service, firstLine(message)]
+        // Lead with where it came from: in a list of documents that all look
+        // alike, "Contactformulier" is the thing that says what this is.
+        subtitle: [
+          `Contactformulier · ${source === "home" ? "homepagina" : "contactpagina"}`,
+          formatDate(submittedAt),
+          service,
+        ]
           .filter(Boolean)
           .join("  ·  "),
         media: EnvelopeIcon,
@@ -162,10 +170,4 @@ function formatDate(value?: string): string {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-}
-
-function firstLine(message?: string): string {
-  if (!message) return "";
-  const line = message.trim().split("\n")[0];
-  return line.length > 70 ? `${line.slice(0, 70)}…` : line;
 }

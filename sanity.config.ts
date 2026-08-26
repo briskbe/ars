@@ -27,12 +27,10 @@ export default defineConfig({
   },
   document: {
     actions: (input, { schemaType }) => {
-      if (schemaType === "submission") {
-        return [
-          ...submissionActions,
-          ...input.filter(({ action }) => action === "delete"),
-        ];
-      }
+      // Submissions carry their own status and delete actions; the built-in
+      // set (publish, duplicate, the generic delete) has nothing to offer a
+      // record that arrived from a form and is never edited by hand.
+      if (schemaType === "submission") return submissionActions;
       if (SINGLETONS.includes(schemaType)) {
         return input.filter(({ action }) =>
           ["publish", "discardChanges", "restore"].includes(action ?? ""),

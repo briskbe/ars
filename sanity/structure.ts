@@ -41,12 +41,12 @@ export const structure: StructureResolver = (S) =>
     .title("Inhoud")
     .items([
       S.listItem()
-        .title("Postvak — berichten")
+        .title("Contactformulier — berichten")
         .id("inbox")
         .icon(EnvelopeIcon)
         .child(
           S.list()
-            .title("Postvak")
+            .title("Berichten van het contactformulier")
             .items([
               inboxList(
                 S,
