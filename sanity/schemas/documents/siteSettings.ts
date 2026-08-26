@@ -36,6 +36,14 @@ export const siteSettings = defineType({
       type: "string",
     }),
     defineField({ name: "email", title: "E-mailadres", type: "string" }),
+    defineField({
+      name: "notificationEmails",
+      title: "Meldingen naar",
+      type: "array",
+      of: [{ type: "string" }],
+      description:
+        "Wie een e-mail krijgt bij een nieuw bericht of een nieuwe sollicitatie. Leeg laten om het e-mailadres hierboven te gebruiken.",
+    }),
     defineField({ name: "address", title: "Adres (regel 1)", type: "string" }),
     defineField({ name: "addressLine2", title: "Adres (regel 2)", type: "string" }),
     defineField({ name: "mapsUrl", title: "Google Maps URL", type: "url" }),

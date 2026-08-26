@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getWriteClient } from "../../../sanity/lib/writeClient";
+import { notifyAdmins, siteOrigin, studioUrlFor } from "../../../sanity/lib/notify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -72,8 +73,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "not-configured" }, { status: 500 });
   }
 
+  let created;
   try {
-    await client.create({
+    created = await client.create({
       _type: "submission",
       ...submission,
       source,
@@ -85,6 +87,35 @@ export async function POST(request: Request) {
     // only remaining copy of what someone tried to send us.
     console.error("[contact] failed to store submission:", err, submission);
     return NextResponse.json({ error: "store-failed" }, { status: 502 });
+  }
+
+  // Best-effort: the message is safely stored, so a mail problem must not turn
+  // into an error for the visitor.
+  try {
+    const origin = siteOrigin(request);
+    await notifyAdmins({
+      subject: `Nieuw bericht via het contactformulier — ${submission.firstName} ${submission.lastName}`,
+      heading: "Nieuw bericht via het contactformulier",
+      replyTo: submission.email,
+      studioUrl: studioUrlFor(origin, created._id, "submission"),
+      lines: [
+        {
+          label: "Binnengekomen via",
+          value:
+            source === "home"
+              ? "Contactformulier — homepagina"
+              : "Contactformulier — contactpagina",
+        },
+        { label: "Naam", value: `${submission.firstName} ${submission.lastName}` },
+        ...(submission.company ? [{ label: "Bedrijf", value: submission.company }] : []),
+        { label: "E-mail", value: submission.email },
+        { label: "Telefoon", value: submission.phone },
+        ...(submission.service ? [{ label: "Dienst", value: submission.service }] : []),
+      ],
+      body: submission.message,
+    });
+  } catch (err) {
+    console.error("[contact] stored, but the notification email failed:", err);
   }
 
   return NextResponse.json({ ok: true });

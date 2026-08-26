@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getWriteClient } from "../../../sanity/lib/writeClient";
+import { notifyAdmins, siteOrigin, studioUrlFor } from "../../../sanity/lib/notify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -106,6 +107,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "not-configured" }, { status: 500 });
   }
 
+  let created: { _id: string } | undefined;
+  let cvUrl: string | undefined;
+  let vacatureTitle = "";
   try {
     // Upload the CV first: a stored application that claims to have a CV but
     // does not would be worse than failing outright, since nobody would know
@@ -121,6 +125,7 @@ export async function POST(request: Request) {
         _type: "file",
         asset: { _type: "reference", _ref: asset._id },
       };
+      cvUrl = asset.url;
     }
 
     const document: { _type: string } & Record<string, unknown> = {
@@ -136,7 +141,8 @@ export async function POST(request: Request) {
       // The title is stored as well as referenced: vacancies get filled and
       // deleted, and an application that no longer says which job it was for
       // is useless.
-      document.vacatureTitle = text(form.get("vacatureTitle"), LIMITS.vacatureTitle);
+      vacatureTitle = text(form.get("vacatureTitle"), LIMITS.vacatureTitle);
+      document.vacatureTitle = vacatureTitle;
       const vacatureId = text(form.get("vacatureId"), 100);
       if (vacatureId) {
         document.vacature = { _type: "reference", _ref: vacatureId, _weak: true };
@@ -145,10 +151,52 @@ export async function POST(request: Request) {
       document.desiredRole = text(form.get("desiredRole"), LIMITS.desiredRole);
     }
 
-    await client.create(document);
+    created = await client.create(document);
   } catch (err) {
     console.error("[sollicitatie] failed to store application:", err, applicant);
     return NextResponse.json({ error: "store-failed" }, { status: 502 });
+  }
+
+  // Best-effort: the application is safely stored, so a mail problem must not
+  // turn into an error for the applicant.
+  try {
+    const origin = siteOrigin(request);
+    const name = `${applicant.firstName} ${applicant.lastName}`;
+    const desiredRole = text(form.get("desiredRole"), LIMITS.desiredRole);
+    await notifyAdmins({
+      subject:
+        kind === "vacature"
+          ? `Nieuwe sollicitatie — ${vacatureTitle || "vacature"} — ${name}`
+          : `Nieuwe spontane sollicitatie — ${name}`,
+      heading:
+        kind === "vacature"
+          ? "Nieuwe sollicitatie op een vacature"
+          : "Nieuwe spontane sollicitatie",
+      replyTo: applicant.email,
+      studioUrl: created ? studioUrlFor(origin, created._id, "application") : undefined,
+      attachmentUrl: cvUrl,
+      lines: [
+        {
+          label: "Binnengekomen via",
+          value:
+            kind === "vacature"
+              ? "Sollicitatieformulier — op een specifieke vacature"
+              : "Sollicitatieformulier — open (spontane) sollicitatie",
+        },
+        ...(kind === "vacature"
+          ? [{ label: "Vacature", value: vacatureTitle || "onbekend" }]
+          : desiredRole
+            ? [{ label: "Functie van interesse", value: desiredRole }]
+            : []),
+        { label: "Naam", value: name },
+        { label: "E-mail", value: applicant.email },
+        { label: "Telefoon", value: applicant.phone },
+        { label: "CV", value: cvUrl ? "bijgevoegd" : "geen CV meegestuurd" },
+      ],
+      body: applicant.motivation,
+    });
+  } catch (err) {
+    console.error("[sollicitatie] stored, but the notification email failed:", err);
   }
 
   return NextResponse.json({ ok: true });

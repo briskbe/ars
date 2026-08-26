@@ -7,7 +7,7 @@ export const SITE_SETTINGS_QUERY = groq`
     "logoUrl": logo.asset->url,
     navLeft[]{ label, href },
     navRight[]{ label, href },
-    phone, email, address, addressLine2, mapsUrl, mapEmbedUrl,
+    phone, email, notificationEmails, address, addressLine2, mapsUrl, mapEmbedUrl,
     hours, hoursNote, footerTagline,
     footerLinks[]{ label, href },
     vcaCertified,

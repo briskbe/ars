@@ -144,6 +144,48 @@ verslag van wat binnenkwam, geen document om aan te passen. Nieuwe berichten
 en sollicitaties kunnen niet handmatig aangemaakt worden — ze komen uitsluitend
 van de site.
 
+### E-mailmeldingen
+
+Bij elk nieuw bericht en elke nieuwe sollicitatie kan er automatisch een mail
+naar het team gaan. Daar is geen aparte maildienst voor nodig: de site logt in
+op de eigen mailbox (bijvoorbeeld `info@ars-metals.be`) en verstuurt van
+daaruit.
+
+Wie de melding krijgt, staat in de CMS: **Site-instellingen → Meldingen naar**.
+Meerdere adressen kunnen; leeg laten gebruikt het e-mailadres van de site.
+
+De inloggegevens van de mailbox horen in de Vercel-omgevingsvariabelen:
+
+| Variabele | Waarde |
+| --- | --- |
+| `SMTP_HOST` | de mailserver van je provider |
+| `SMTP_PORT` | `587` (of `465` voor directe SSL) |
+| `SMTP_USER` | het volledige e-mailadres |
+| `SMTP_PASS` | het wachtwoord, of een app-wachtwoord |
+| `SMTP_FROM` | optioneel; standaard hetzelfde als `SMTP_USER` |
+
+Veelgebruikte providers:
+
+- **Google Workspace** — `smtp.gmail.com`, poort `587`. Vereist een
+  *app-wachtwoord*: 2-factor-authenticatie aanzetten en er daarna één
+  aanmaken. Het gewone wachtwoord werkt niet.
+- **Microsoft 365** — `smtp.office365.com`, poort `587`. SMTP AUTH staat
+  standaard **uit** en moet per mailbox aangezet worden in het
+  beheerdersportaal.
+- **Klassieke hosting (Combell, One.com, …)** — meestal `smtp.<jouwdomein>` of
+  de mailserver uit de handleiding van je host, poort `587` of `465`, met het
+  gewone mailboxwachtwoord.
+
+Zonder deze variabelen worden er geen meldingen verstuurd — de formulieren
+blijven gewoon werken en alles komt nog steeds in de CMS. Mislukt het
+versturen, dan blijft de inzending ook bewaard: de melding is extra, nooit de
+enige kopie. In de Vercel-logs staat dan waarom.
+
+De mail heeft *reply-to* op de afzender staan, dus rechtstreeks antwoorden komt
+bij de bezoeker of sollicitant terecht. Bij een sollicitatie zit er een link
+naar het CV in, en elke melding heeft een link die het document meteen in de
+CMS opent.
+
 ### CV's
 
 Een meegestuurd CV staat als bestand in de sollicitatie; klik erop om het te
@@ -186,6 +228,7 @@ sanity/
     types.ts              # TypeScript types matching the GROQ shapes
     writeClient.ts        # write-enabled client, server-side only
     inboxActions.ts       # status + delete buttons for both inbox types
+    notify.ts             # SMTP notification mail via the site's own mailbox
     formatSubmittedAt.ts  # date formatting shared by the inbox previews
   schemas/
     objects/              # reusable inline objects

@@ -20,6 +20,7 @@ export type SiteSettings = {
   navRight?: SanityNavLink[];
   phone?: string;
   email?: string;
+  notificationEmails?: string[];
   address?: string;
   addressLine2?: string;
   mapsUrl?: string;
