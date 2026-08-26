@@ -29,6 +29,11 @@ export default async function RootLayout({
 }) {
   const site = await sanityFetch<SiteSettings | null>(SITE_SETTINGS_QUERY);
 
+  // The WhatsApp widget is strictly opt-in from the CMS: only an explicit
+  // `true` shows it. A settings document written before the field existed
+  // carries no value at all, and the Studio renders that missing value as an
+  // off switch — so anything other than `true` has to mean off, otherwise the
+  // site contradicts the toggle the editor is looking at.
   return (
     <html lang="nl">
       <body className="bg-white">
@@ -39,7 +44,7 @@ export default async function RootLayout({
           tagline={site?.whatsappTagline}
           name={site?.title?.split("|")[0].trim()}
           logoUrl={site?.logoUrl ?? "/logo.png"}
-          enabled={site?.whatsappEnabled !== false}
+          enabled={site?.whatsappEnabled === true}
         />
       </body>
     </html>

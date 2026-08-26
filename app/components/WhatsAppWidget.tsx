@@ -13,8 +13,8 @@ type Props = {
   name?: string | null;
   /** Small line under the name, e.g. expected response time. */
   tagline?: string | null;
-  /** Set to false in the CMS to hide the widget site-wide. */
-  enabled?: boolean;
+  /** Whether the CMS toggle is on. Required — an absent value means off. */
+  enabled: boolean;
   /** Logo/avatar shown in the panel header. */
   logoUrl?: string | null;
 };
@@ -42,7 +42,7 @@ export default function WhatsAppWidget({
   message,
   name,
   tagline,
-  enabled = true,
+  enabled,
   logoUrl,
 }: Props) {
   const pathname = usePathname();
