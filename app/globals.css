@@ -18,7 +18,7 @@
   }
 
   ::selection {
-    @apply bg-ember-500 text-white;
+    @apply bg-gray-950 text-white;
   }
 }
 
@@ -31,9 +31,9 @@
     @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-200 bg-white px-7 py-3.5 text-sm font-semibold text-gray-900 transition-all duration-300 hover:border-black hover:bg-black hover:text-white hover:-translate-y-0.5 active:translate-y-0;
   }
 
-  /* The homepage's signature button: molten edge, steel core. */
-  .btn-ember {
-    @apply inline-flex items-center justify-center gap-2.5 rounded-xl bg-ember-500 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-ember-500/25 transition-all duration-300 hover:bg-ember-600 hover:shadow-xl hover:shadow-ember-500/35 hover:-translate-y-0.5 active:translate-y-0;
+  /* The homepage's button: an ink-black pill. */
+  .btn-mono {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full bg-gray-950 px-8 py-4 text-[15px] font-bold text-white transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 active:translate-y-0;
   }
 
   .section-padding {
@@ -58,6 +58,39 @@
   .text-pretty {
     text-wrap: pretty;
   }
+
+  /* Hollow type: the stroke takes its color from `color`, so the usual
+     text-* utilities (and their group-hover variants) drive it. */
+  .text-outline {
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: currentColor;
+  }
+
+  .text-outline-thin {
+    -webkit-text-stroke-width: 1px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  LENIS (smooth scroll)                                              */
+/* ------------------------------------------------------------------ */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 /* ------------------------------------------------------------------ */
@@ -93,43 +126,10 @@
 .hazard-stripes {
   background-image: repeating-linear-gradient(
     -45deg,
-    rgba(255, 95, 31, 0.9) 0px,
-    rgba(255, 95, 31, 0.9) 10px,
+    rgba(255, 255, 255, 0.22) 0px,
+    rgba(255, 255, 255, 0.22) 10px,
     transparent 10px,
     transparent 20px
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  SPOTLIGHT CARDS                                                    */
-/* ------------------------------------------------------------------ */
-
-/* A radial highlight that follows the cursor. Coordinates come from JS
-   as --mx / --my; with no pointer the card simply stays flat. */
-.spotlight::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-  background: radial-gradient(
-    260px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(255, 95, 31, 0.16),
-    transparent 70%
-  );
-}
-
-.spotlight:hover::before {
-  opacity: 1;
-}
-
-.spotlight-dark::before {
-  background: radial-gradient(
-    300px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(255, 95, 31, 0.22),
-    transparent 70%
   );
 }
 
@@ -271,22 +271,19 @@
   animation: heroKenBurns 28s ease-in-out alternate infinite;
 }
 
-/* Headline words rise out of their own line box, one after another. */
-@keyframes wordRise {
-  from {
-    opacity: 0;
-    transform: translateY(120%) rotate(2deg);
-  }
+/* Headline characters rise out of a masked line box, one after another. */
+@keyframes charRise {
   to {
     opacity: 1;
     transform: translateY(0) rotate(0);
   }
 }
 
-.word-rise {
+.char-rise {
   display: inline-block;
   opacity: 0;
-  animation: wordRise 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: translateY(115%) rotate(3deg);
+  animation: charRise 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* ------------------------------------------------------------------ */
@@ -299,17 +296,18 @@
   }
 
   .hero-bg-image,
-  .word-rise,
+  .char-rise,
   .animate-fade-in-up,
   .animate-marquee,
-  .animate-ember-pulse,
+  .animate-glow-pulse,
   .animate-scroll-cue {
     animation: none !important;
   }
 
-  .word-rise,
+  .char-rise,
   .animate-fade-in-up {
     opacity: 1;
+    transform: none;
   }
 
   [data-reveal] {

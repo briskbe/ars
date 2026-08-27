@@ -110,11 +110,11 @@ export default function Footer({ site, services = [], variant = "withServices" }
             &copy; {new Date().getFullYear()} ARS Metals. Alle rechten voorbehouden.
           </p>
           {site?.vcaCertified !== false && (
-            <div className="flex items-center gap-2.5 rounded-lg border border-teal-200/60 bg-gradient-to-r from-teal-50/80 to-cyan-50/60 px-4 py-2 shadow-sm">
+            <div className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 shadow-sm">
               <img src="/vca.png" alt="VCA Certified" className="h-7 w-auto" />
-              <div className="border-l border-teal-200 pl-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-teal-800">Gecertificeerd</p>
-                <p className="text-[10px] text-teal-600">Veiligheid</p>
+              <div className="border-l border-gray-200 pl-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-900">Gecertificeerd</p>
+                <p className="text-[10px] text-gray-500">Veiligheid</p>
               </div>
             </div>
           )}

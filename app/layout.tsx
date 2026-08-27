@@ -12,7 +12,7 @@ const FALLBACK_WHATSAPP = "+32 (0)89 36 77 87";
 
 const NOSCRIPT_MOTION_RESET = `
   [data-reveal] { opacity: 1 !important; transform: none !important; }
-  .word-rise, .animate-fade-in-up { opacity: 1 !important; animation: none !important; }
+  .char-rise, .animate-fade-in-up { opacity: 1 !important; transform: none !important; animation: none !important; }
 `;
 
 export async function generateMetadata(): Promise<Metadata> {
