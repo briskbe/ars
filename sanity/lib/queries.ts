@@ -70,6 +70,31 @@ export const CONTACT_QUERY = groq`{
   }
 }`;
 
+export const REALISATIES_QUERY = groq`{
+  "page": *[_type == "realisatiesPage" && _id == "realisatiesPage"][0]{
+    heroEyebrow, heroTitle, heroSubtitle,
+    "heroImageUrl": heroImage.asset->url,
+    ctaEyebrow, ctaTitle, ctaText,
+    ctaButton{ label, href, style }
+  },
+  "site": *[_type == "siteSettings" && _id == "siteSettings"][0]{
+    title, description, "logoUrl": logo.asset->url,
+    navLeft[]{ label, href },
+    navRight[]{ label, href },
+    phone, email, address, addressLine2, mapsUrl, hours, hoursNote,
+    footerTagline, footerLinks[]{ label, href }, vcaCertified,
+    whatsappEnabled, whatsappNumber, whatsappMessage, whatsappTagline
+  },
+  "projects": *[_type == "project"] | order(featured desc, order asc){
+    _id, title, category, summary, description,
+    clientName, location, year, highlights, featured,
+    "imageUrl": mainImage.asset->url,
+    "imageAlt": mainImage.alt,
+    "imageLqip": mainImage.asset->metadata.lqip,
+    gallery[]{ "url": asset->url, alt, caption }
+  }
+}`;
+
 export const VACATURES_QUERY = groq`{
   "page": *[_type == "vacaturesPage" && _id == "vacaturesPage"][0]{
     heroEyebrow, heroTitle, heroSubtitle,
