@@ -1,16 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Reveal offsets and decorative glows reach past the viewport on their
+       way in; clip them rather than handing mobile a sideways scrollbar. */
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     @apply font-sans text-gray-900 antialiased;
+  }
+
+  ::selection {
+    @apply bg-gray-950 text-white;
   }
 }
 
@@ -23,6 +31,11 @@
     @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-200 bg-white px-7 py-3.5 text-sm font-semibold text-gray-900 transition-all duration-300 hover:border-black hover:bg-black hover:text-white hover:-translate-y-0.5 active:translate-y-0;
   }
 
+  /* The homepage's button: an ink-black pill. */
+  .btn-mono {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-full bg-gray-950 px-8 py-4 text-[15px] font-bold text-white transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
   .section-padding {
     @apply px-6 py-24 md:px-8 lg:px-12 lg:py-32;
   }
@@ -30,25 +43,115 @@
   .container-wide {
     @apply mx-auto max-w-7xl;
   }
+
+  /* Small caps label used above every section heading. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em];
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Hollow type: the stroke takes its color from `color`, so the usual
+     text-* utilities (and their group-hover variants) drive it. */
+  .text-outline {
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: currentColor;
+  }
+
+  .text-outline-thin {
+    -webkit-text-stroke-width: 1px;
+  }
 }
+
+/* ------------------------------------------------------------------ */
+/*  LENIS (smooth scroll)                                              */
+/* ------------------------------------------------------------------ */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/*  SURFACES                                                           */
+/* ------------------------------------------------------------------ */
 
 /* Subtle grid background */
 .grid-bg {
-  background-image: linear-gradient(
-      rgba(0, 0, 0, 0.03) 1px,
-      transparent 1px
-    ),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
-/* Fade in animation */
+/* Engineering drawing grid, tuned for dark sections. */
+.blueprint-bg {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* Film grain overlay — keeps large dark areas from banding. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Diagonal hazard stripes, used as a thin rule between sections. */
+.hazard-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.22) 0px,
+    rgba(255, 255, 255, 0.22) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  MARQUEE                                                            */
+/* ------------------------------------------------------------------ */
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/*  MOTION                                                             */
+/* ------------------------------------------------------------------ */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -61,7 +164,8 @@
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-delay-100 {
@@ -76,11 +180,21 @@
 .animate-delay-400 {
   animation-delay: 400ms;
 }
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+.animate-delay-700 {
+  animation-delay: 700ms;
+}
 
 /* Modal animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalIn {
@@ -102,20 +216,103 @@
   animation: modalIn 0.3s ease-out forwards;
 }
 
+/* Scroll reveal — elements start displaced and settle once observed.
+   The `is-visible` class is added by useReveal(). */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal="left"] {
+  transform: translateX(-32px);
+}
+
+[data-reveal="right"] {
+  transform: translateX(32px);
+}
+
+[data-reveal="scale"] {
+  transform: scale(0.94);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Below lg the columns these belong to are stacked, so a sideways entrance
+   has nothing to describe — and its offset would widen the page. */
+@media (max-width: 1023px) {
+  [data-reveal="left"],
+  [data-reveal="right"] {
+    transform: translateY(28px);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  HERO                                                               */
 /* ------------------------------------------------------------------ */
 
 /* Slow Ken Burns — just enough to feel alive, not enough to notice */
 @keyframes heroKenBurns {
-  0%   { transform: scale(1.0); }
-  100% { transform: scale(1.05); }
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08);
+  }
 }
 
 .hero-bg-image {
-  animation: heroKenBurns 25s ease-in-out alternate infinite;
+  animation: heroKenBurns 28s ease-in-out alternate infinite;
 }
 
-.animate-delay-500 {
-  animation-delay: 500ms;
+/* Headline characters rise out of a masked line box, one after another. */
+@keyframes charRise {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+.char-rise {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(115%) rotate(3deg);
+  animation: charRise 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ------------------------------------------------------------------ */
+/*  ACCESSIBILITY                                                      */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-bg-image,
+  .char-rise,
+  .animate-fade-in-up,
+  .animate-marquee,
+  .animate-glow-pulse,
+  .animate-scroll-cue {
+    animation: none !important;
+  }
+
+  .char-rise,
+  .animate-fade-in-up {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
