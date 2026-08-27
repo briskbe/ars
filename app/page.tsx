@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { sanityFetch } from "../sanity/lib/fetch";
 import { HOME_QUERY } from "../sanity/lib/queries";
 import type { HomePage, SanityService, SiteSettings } from "../sanity/lib/types";
 import HomeClient from "./HomeClient";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 type HomeData = {
   page: HomePage | null;

@@ -1,5 +1,20 @@
+import type { Metadata } from "next";
 import { sanityFetch } from "../../sanity/lib/fetch";
 import { VACATURES_QUERY } from "../../sanity/lib/queries";
+
+const DESCRIPTION =
+  "Werken bij ARS Metals in Genk: bekijk onze openstaande vacatures voor lassers, monteurs en techniekers, of stuur een open sollicitatie. Ook onderaannemers zijn welkom.";
+
+export const metadata: Metadata = {
+  title: "Vacatures",
+  description: DESCRIPTION,
+  alternates: { canonical: "/vacatures" },
+  openGraph: {
+    title: "Vacatures | ARS Metals",
+    description: DESCRIPTION,
+    url: "/vacatures",
+  },
+};
 import type {
   SanityVacature,
   SiteSettings,
