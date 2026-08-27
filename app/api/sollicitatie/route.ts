@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { getWriteClient } from "../../../sanity/lib/writeClient";
+import { sendEmails } from "../../../lib/email/send";
+import { applicationEmails } from "../../../lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -106,15 +108,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "not-configured" }, { status: 500 });
   }
 
+  let vacatureTitle = "";
+  let desiredRole = "";
+  let cvBuffer: Buffer | undefined;
+
   try {
     // Upload the CV first: a stored application that claims to have a CV but
     // does not would be worse than failing outright, since nobody would know
     // to ask the applicant for it again.
     let cvField: Record<string, unknown> | undefined;
     if (hasCv) {
+      cvBuffer = Buffer.from(await cv.arrayBuffer());
       const asset = await client.assets.upload(
         "file",
-        Buffer.from(await cv.arrayBuffer()),
+        cvBuffer,
         { filename: cv.name, contentType: cv.type || undefined },
       );
       cvField = {
@@ -136,13 +143,15 @@ export async function POST(request: Request) {
       // The title is stored as well as referenced: vacancies get filled and
       // deleted, and an application that no longer says which job it was for
       // is useless.
-      document.vacatureTitle = text(form.get("vacatureTitle"), LIMITS.vacatureTitle);
+      vacatureTitle = text(form.get("vacatureTitle"), LIMITS.vacatureTitle);
+      document.vacatureTitle = vacatureTitle;
       const vacatureId = text(form.get("vacatureId"), 100);
       if (vacatureId) {
         document.vacature = { _type: "reference", _ref: vacatureId, _weak: true };
       }
     } else {
-      document.desiredRole = text(form.get("desiredRole"), LIMITS.desiredRole);
+      desiredRole = text(form.get("desiredRole"), LIMITS.desiredRole);
+      document.desiredRole = desiredRole;
     }
 
     await client.create(document);
@@ -150,6 +159,22 @@ export async function POST(request: Request) {
     console.error("[sollicitatie] failed to store application:", err, applicant);
     return NextResponse.json({ error: "store-failed" }, { status: 502 });
   }
+
+  // Mail is a courtesy on top of the stored application: confirmation to the
+  // candidate, notification (with CV attached) to the inbox. Never fails the
+  // request.
+  await sendEmails(
+    applicationEmails({
+      ...applicant,
+      kind,
+      vacatureTitle,
+      desiredRole,
+      cv:
+        hasCv && cvBuffer
+          ? { filename: cv.name, content: cvBuffer.toString("base64") }
+          : undefined,
+    }),
+  );
 
   return NextResponse.json({ ok: true });
 }

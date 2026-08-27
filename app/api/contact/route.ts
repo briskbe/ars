@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { getWriteClient } from "../../../sanity/lib/writeClient";
+import { sendEmails } from "../../../lib/email/send";
+import { contactEmails } from "../../../lib/email/templates";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -86,6 +88,10 @@ export async function POST(request: Request) {
     console.error("[contact] failed to store submission:", err, submission);
     return NextResponse.json({ error: "store-failed" }, { status: 502 });
   }
+
+  // Mail is a courtesy on top of the stored message: confirmation to the
+  // visitor, notification to the inbox. Never fails the request.
+  await sendEmails(contactEmails(submission, source));
 
   return NextResponse.json({ ok: true });
 }
