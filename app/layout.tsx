@@ -10,6 +10,11 @@ const FALLBACK_DESCRIPTION =
   "ARS Metals biedt expertise in industriële las- en montagewerken, rook- en warmteafvoer, service & onderhoud en meer. Al meer dan 10 jaar uw betrouwbare partner.";
 const FALLBACK_WHATSAPP = "+32 (0)89 36 77 87";
 
+const NOSCRIPT_MOTION_RESET = `
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .word-rise, .animate-fade-in-up { opacity: 1 !important; animation: none !important; }
+`;
+
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const site = await sanityFetch<SiteSettings | null>(SITE_SETTINGS_QUERY);
@@ -37,6 +42,11 @@ export default async function RootLayout({
   return (
     <html lang="nl">
       <body className="bg-white">
+        {/* Scroll-driven reveals hide their content until observed. Without
+            JavaScript nothing would ever observe them, so opt out entirely. */}
+        <noscript>
+          <style>{NOSCRIPT_MOTION_RESET}</style>
+        </noscript>
         {children}
         <WhatsAppWidget
           number={site?.whatsappNumber ?? site?.phone ?? FALLBACK_WHATSAPP}
