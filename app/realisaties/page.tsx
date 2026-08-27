@@ -8,10 +8,18 @@ import type {
 } from "../../sanity/lib/types";
 import RealisatiesClient from "./RealisatiesClient";
 
+const DESCRIPTION =
+  "Een selectie van onze industriële projecten: laswerken, montagewerken, rook- en warmteafvoer en complete machineverhuizingen — bekijk hoe wij vakmanschap in staal omzetten.";
+
 export const metadata: Metadata = {
-  title: "Realisaties | ARS Metals",
-  description:
-    "Een selectie van onze industriële projecten: laswerken, montagewerken, rook- en warmteafvoer en complete machineverhuizingen — bekijk hoe wij vakmanschap in staal omzetten.",
+  title: "Realisaties",
+  description: DESCRIPTION,
+  alternates: { canonical: "/realisaties" },
+  openGraph: {
+    title: "Realisaties | ARS Metals",
+    description: DESCRIPTION,
+    url: "/realisaties",
+  },
 };
 
 type RealisatiesData = {
