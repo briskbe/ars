@@ -9,7 +9,9 @@
  *   NEXT_PUBLIC_SANITY_DATASET
  *   SANITY_API_WRITE_TOKEN   (Editor or Admin token from sanity.io/manage)
  */
-import "dotenv/config";
+import { config as loadEnv } from "dotenv";
+
+loadEnv({ path: [".env.local", ".env"] });
 import { createReadStream } from "node:fs";
 import { basename, join } from "node:path";
 import { createClient } from "@sanity/client";
