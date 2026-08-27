@@ -10,6 +10,8 @@
  *   SANITY_API_WRITE_TOKEN   (Editor or Admin token from sanity.io/manage)
  */
 import "dotenv/config";
+import { createReadStream } from "node:fs";
+import { basename, join } from "node:path";
 import { createClient } from "@sanity/client";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
@@ -76,7 +78,7 @@ async function seedSiteSettings() {
     navLeft: [
       { _key: "n1", label: "Homepagina", href: "/" },
       { _key: "n2", label: "Diensten", href: "/#diensten" },
-      { _key: "n3", label: "Realisaties", href: "/#over-ons" },
+      { _key: "n3", label: "Realisaties", href: "/realisaties" },
       { _key: "n4", label: "Over ons", href: "/#waarom" },
     ],
     navRight: [{ _key: "nr1", label: "Vacatures", href: "/vacatures" }],
@@ -93,7 +95,7 @@ async function seedSiteSettings() {
       "Uw betrouwbare partner voor industriële diensten. Van laswerken tot montage, van onderhoud tot verhuizingen — wij staan voor u klaar.",
     footerLinks: [
       { _key: "f1", label: "Over ons", href: "/#waarom" },
-      { _key: "f2", label: "Realisaties", href: "/#over-ons" },
+      { _key: "f2", label: "Realisaties", href: "/realisaties" },
       { _key: "f3", label: "Vacatures", href: "/vacatures" },
       { _key: "f4", label: "Contact", href: "/contact" },
     ],
@@ -261,6 +263,157 @@ async function seedVacaturesPage() {
   });
 }
 
+/**
+ * De vier voorbeeldprojecten — inhoudelijk identiek aan de fallback in
+ * app/realisaties/placeholders.ts, maar mét geüploade afbeeldingen zodat
+ * de redactie ze in de Studio meteen kan vervangen door echte projectfoto's.
+ */
+const PROJECTS = [
+  {
+    title: "Staalconstructie nieuwe productiehal",
+    category: "Montagewerken",
+    summary:
+      "Volledige montage van de draagstructuur voor een productiehal van 4.200 m² — van eerste kolom tot laatste windverband, opgeleverd binnen de geplande zes weken.",
+    description:
+      "Voor een industriële klant in Limburg stonden we in voor de complete montage van een nieuwe productiehal. Ons team monteerde 42 ton staal: kolommen, spanten, gordingen en windverbanden, inclusief het uitlijnen en aandraaien volgens momenttabel. Dankzij een strakke werfplanning en dagelijkse afstemming met de bouwheer bleef de werf continu in beweging — zonder één dag stilstand.",
+    clientName: "Industriële klant — Limburg",
+    location: "Genk",
+    year: "2025",
+    highlights: [
+      "42 ton staal gemonteerd",
+      "4.200 m² productiehal",
+      "6 weken doorlooptijd",
+      "Opgeleverd zonder stilstand",
+    ],
+    featured: true,
+    image: "hero.jpg",
+    imageAlt: "Montage van een industriële staalconstructie",
+    gallery: ["over.jpg", "vacatures.png"],
+  },
+  {
+    title: "RWA-installatie logistiek centrum",
+    category: "Rook- en warmteafvoer",
+    summary:
+      "Plaatsing van 36 rookluiken met bijhorende sturing in een logistiek centrum in volle exploitatie — geleverd, geplaatst en gekeurd zonder onderbreking van de activiteit.",
+    description:
+      "In een logistiek centrum van 18.000 m² installeerden we een volledig rook- en warmteafvoersysteem conform EN 12101. Omdat het magazijn tijdens de werken operationeel bleef, werkten we in zones en buiten de piekuren. Na plaatsing volgde de indienststelling met de keuringsinstantie: alle 36 luiken in één keer goedgekeurd.",
+    clientName: "Logistieke groep — Antwerpen",
+    location: "Antwerpen",
+    year: "2024",
+    highlights: [
+      "36 rookluiken geplaatst",
+      "Conform EN 12101",
+      "18.000 m² magazijn",
+      "Geen onderbreking van de exploitatie",
+    ],
+    featured: false,
+    image: "over.jpg",
+    imageAlt: "Rookluiken op het dak van een logistiek centrum",
+    gallery: ["hero.jpg"],
+  },
+  {
+    title: "Inox leidingwerk voedingsindustrie",
+    category: "Laswerken",
+    summary:
+      "480 meter TIG-gelast leidingwerk in inox 316L voor een productielijn in de voedingsindustrie — elke las gecontroleerd, honderd procent goedgekeurd.",
+    description:
+      "Voor een producent in de voedingsindustrie lasten onze gecertificeerde specialisten 480 meter procesleidingen in inox 316L. Alle verbindingen werden TIG-gelast onder beschermgas en aansluitend onderworpen aan niet-destructief onderzoek. Het resultaat: een volledige goedkeuring bij de eerste controle en een lijn die dezelfde week nog in productie ging.",
+    clientName: "Voedingsproducent — Oost-Vlaanderen",
+    location: "Gent",
+    year: "2024",
+    highlights: [
+      "480 m leidingwerk",
+      "TIG-gelast inox 316L",
+      "100% goedgekeurd bij controle",
+      "Zelfde week terug in productie",
+    ],
+    featured: false,
+    image: "contact.png",
+    imageAlt: "TIG-laswerk aan inox leidingen",
+    gallery: ["hero.jpg"],
+  },
+  {
+    title: "Verhuis complete productielijn",
+    category: "Industrieel montage & verhuis",
+    summary:
+      "Demontage, transport en hermontage van een volledige productielijn met veertien machines — van laatste productiedag tot herstart in amper vijf dagen.",
+    description:
+      "Een producent verhuisde zijn volledige productie van Genk naar een nieuwe site in Luik. Wij demonteerden veertien machines, verzorgden het transport met uitzonderlijk vervoer en bouwden de lijn op de nieuwe locatie weer op — uitgelijnd, aangesloten en getest. Vijf dagen na de laatste productiedag draaide de lijn opnieuw op volle capaciteit, zonder één incident.",
+    clientName: "Productiebedrijf — Limburg",
+    location: "Genk → Luik",
+    year: "2023",
+    highlights: [
+      "14 machines verplaatst",
+      "Herstart binnen 5 dagen",
+      "Uitgelijnd en getest opgeleverd",
+      "Nul incidenten",
+    ],
+    featured: false,
+    image: "vacatures.png",
+    imageAlt: "Demontage van industriële machines",
+    gallery: ["over.jpg"],
+  },
+];
+
+async function seedRealisatiesPage() {
+  return client.createOrReplace({
+    _id: "realisatiesPage",
+    _type: "realisatiesPage",
+    heroEyebrow: "Realisaties",
+    heroTitle: "Werk dat\n[blijft staan]",
+    heroSubtitle:
+      "Elk project vertelt hetzelfde verhaal: vakmanschap, precisie en een oplevering waar we achter staan. Een selectie van ons werk.",
+    ctaEyebrow: "Uw project",
+    ctaTitle: "Uw project wordt onze [volgende realisatie]",
+    ctaText:
+      "Van een eerste schets tot de oplevering: vertel ons wat u voor ogen heeft en wij bekijken samen hoe we het waarmaken.",
+    ctaButton: { label: "Neem contact op", href: "/contact", style: "primary" },
+  });
+}
+
+async function seedProjects() {
+  // Elke publieke afbeelding maar één keer uploaden, hoe vaak ze ook terugkomt.
+  const assetIds = new Map<string, string>();
+  const upload = async (file: string) => {
+    const cached = assetIds.get(file);
+    if (cached) return cached;
+    const asset = await client.assets.upload(
+      "image",
+      createReadStream(join(process.cwd(), "public", file)),
+      { filename: basename(file) },
+    );
+    assetIds.set(file, asset._id);
+    return asset._id;
+  };
+
+  for (let i = 0; i < PROJECTS.length; i++) {
+    const { image, imageAlt, gallery, ...fields } = PROJECTS[i];
+    const mainAssetId = await upload(image);
+    const galleryImages = [];
+    for (let g = 0; g < gallery.length; g++) {
+      galleryImages.push({
+        _key: `g${g + 1}`,
+        _type: "image",
+        asset: { _type: "reference", _ref: await upload(gallery[g]) },
+      });
+    }
+
+    await client.createOrReplace({
+      _id: `project-${i + 1}`,
+      _type: "project",
+      ...fields,
+      order: i,
+      mainImage: {
+        _type: "image",
+        asset: { _type: "reference", _ref: mainAssetId },
+        alt: imageAlt,
+      },
+      gallery: galleryImages,
+    });
+    console.log(`  ✓ project: ${fields.title}`);
+  }
+}
+
 async function seedServices() {
   const tx = client.transaction();
   SERVICES.forEach((s, i) => {
@@ -309,6 +462,10 @@ async function seedVacatures() {
   console.log("✓ contactPage");
   await seedVacaturesPage();
   console.log("✓ vacaturesPage");
+  await seedRealisatiesPage();
+  console.log("✓ realisatiesPage");
+  await seedProjects();
+  console.log(`✓ ${PROJECTS.length} realisaties (met afbeeldingen)`);
   await seedServices();
   console.log(`✓ ${SERVICES.length} services`);
   await seedVacatures();

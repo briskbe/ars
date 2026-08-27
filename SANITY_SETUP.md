@@ -55,7 +55,8 @@ npm run sanity:seed
 ```
 
 You should see ✓ for siteSettings, homePage, contactPage, vacaturesPage,
-8 services and 6 vacatures.
+realisatiesPage, 8 services, 6 vacatures and 4 realisaties (voorbeeldprojecten,
+inclusief geüploade foto's — vervang ze gerust door echte projectfoto's).
 
 ## 4. Run locally
 
@@ -102,7 +103,9 @@ Inside `/studio`:
 | Homepagina | `homePage` (singleton) | All sections of `/`: hero copy + image, services intro, about, why-us, jobs banner, contact intro |
 | Contactpagina | `contactPage` (singleton) | All sections of `/contact`: hero, contact cards, form copy, dropdown service options, map header |
 | Vacaturepagina | `vacaturesPage` (singleton) | All sections of `/vacatures`: hero, benefits cards, listings headers, application copy |
+| Realisatiepagina | `realisatiesPage` (singleton) | Hero + afsluitende CTA van `/realisaties` |
 | Diensten | `service` (collection) | The 8 service cards — drag to reorder, add/remove freely |
+| Realisaties | `project` (collection) | Projectfoto's (hoofdfoto + galerij), omschrijvingen, categorie, locatie, jaar, kerncijfers. `Uitgelicht` geeft een project de badge bovenaan; volgorde via het nummerveld |
 | Vacatures | `vacature` (collection) | All job postings (internal + subcontractor). Toggle `Actief` to hide |
 
 Icons are picked from a fixed list (lucide-react) — see

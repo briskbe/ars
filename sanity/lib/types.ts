@@ -42,6 +42,40 @@ export type SanityService = {
   description: string;
 };
 
+export type SanityProjectImage = {
+  url: string;
+  alt?: string;
+  caption?: string;
+};
+
+export type SanityProject = {
+  _id: string;
+  title: string;
+  category: string;
+  summary: string;
+  description?: string;
+  clientName?: string;
+  location?: string;
+  year?: string;
+  highlights?: string[];
+  featured?: boolean;
+  imageUrl?: string;
+  imageAlt?: string;
+  imageLqip?: string;
+  gallery?: SanityProjectImage[];
+};
+
+export type RealisatiesPage = {
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroImageUrl?: string;
+  ctaEyebrow?: string;
+  ctaTitle?: string;
+  ctaText?: string;
+  ctaButton?: SanityCta;
+};
+
 export type SanityVacature = {
   _id: string;
   title: string;

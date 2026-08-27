@@ -107,7 +107,14 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.document().schemaType("vacaturesPage").documentId("vacaturesPage"),
         ),
+      S.listItem()
+        .title("Realisatiepagina")
+        .id("realisatiesPage")
+        .child(
+          S.document().schemaType("realisatiesPage").documentId("realisatiesPage"),
+        ),
       S.divider(),
       S.documentTypeListItem("service").title("Diensten"),
+      S.documentTypeListItem("project").title("Realisaties"),
       S.documentTypeListItem("vacature").title("Vacatures"),
     ]);
