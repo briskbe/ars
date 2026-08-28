@@ -8,6 +8,13 @@ export const service = defineType({
     defineField({ name: "title", title: "Titel", type: "string", validation: (r) => r.required() }),
     defineField({ name: "icon", title: "Icoon", type: "iconName", validation: (r) => r.required() }),
     defineField({
+      name: "image",
+      title: "Foto",
+      type: "image",
+      options: { hotspot: true },
+      description: "Getoond op de dienstkaart op de homepagina",
+    }),
+    defineField({
       name: "description",
       title: "Omschrijving",
       type: "text",
