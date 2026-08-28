@@ -40,6 +40,7 @@ export type SanityService = {
   title: string;
   icon: IconName;
   description: string;
+  imageUrl?: string;
 };
 
 export type SanityProjectImage = {

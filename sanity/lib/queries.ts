@@ -17,7 +17,8 @@ export const SITE_SETTINGS_QUERY = groq`
 
 export const SERVICES_QUERY = groq`
   *[_type == "service"] | order(order asc){
-    _id, title, icon, description
+    _id, title, icon, description,
+    "imageUrl": image.asset->url
   }
 `;
 
@@ -46,7 +47,8 @@ export const HOME_QUERY = groq`{
     whatsappEnabled, whatsappNumber, whatsappMessage, whatsappTagline
   },
   "services": *[_type == "service"] | order(order asc){
-    _id, title, icon, description
+    _id, title, icon, description,
+    "imageUrl": image.asset->url
   }
 }`;
 

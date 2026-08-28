@@ -620,34 +620,49 @@ function ServiceCard({
     <article
       data-reveal
       style={revealDelay(horizontal ? 0 : index, 70)}
-      className={`group relative flex flex-col overflow-hidden border border-gray-200 bg-white p-8 transition-colors duration-500 hover:border-gray-950 hover:bg-gray-950 ${
+      className={`group relative flex flex-col overflow-hidden bg-gray-950 p-8 ${
         horizontal
-          ? `h-[24rem] w-[21rem] shrink-0 lg:w-[23rem] ${index % 2 === 1 ? "lg:mt-6" : ""}`
-          : "h-full"
+          ? `h-[26rem] w-[21rem] shrink-0 lg:w-[23rem] ${index % 2 === 1 ? "lg:mt-6" : ""}`
+          : "h-full min-h-[22rem]"
       }`}
     >
-      {/* Watermark index, hollow until the card inverts. */}
-      <span className="text-outline pointer-events-none absolute -bottom-8 -right-2 select-none font-display text-[9rem] font-black leading-none text-gray-200 transition-colors duration-500 group-hover:text-white/25">
+      {/* The photo rests in monochrome and blooms to color on hover. */}
+      {service.imageUrl ? (
+        <img
+          src={`${service.imageUrl}?w=900&q=80&auto=format`}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover grayscale contrast-110 brightness-[0.85] transition-all duration-700 ease-out group-hover:scale-[1.06] group-hover:grayscale-0"
+        />
+      ) : (
+        <div className="absolute inset-0 blueprint-bg opacity-60" />
+      )}
+
+      {/* Scrims seat the copy on any photo; hover lifts them slightly. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/45 to-gray-950/15 transition-opacity duration-700 group-hover:opacity-90" />
+
+      {/* Watermark index over the photo. */}
+      <span className="text-outline pointer-events-none absolute -bottom-8 -right-2 select-none font-display text-[9rem] font-black leading-none text-white/45 transition-colors duration-500 group-hover:text-white/70">
         {String(index + 1).padStart(2, "0")}
       </span>
 
       <div className="relative flex items-start justify-between">
-        <div className="inline-flex bg-gray-950 p-3.5 text-white transition-colors duration-500 group-hover:bg-white group-hover:text-gray-950">
+        <div className="inline-flex bg-white p-3.5 text-gray-950 transition-transform duration-500 group-hover:-translate-y-1">
           <Icon className="h-6 w-6" strokeWidth={1.75} />
         </div>
-        <span className="font-display text-xs font-bold tracking-[0.2em] text-gray-400 transition-colors duration-500 group-hover:text-white/50">
+        <span className="font-display text-xs font-bold tracking-[0.2em] text-white/60">
           {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </span>
       </div>
 
       <div className="relative mt-auto pt-10">
-        <h3 className="font-display text-xl font-bold uppercase leading-tight text-gray-950 transition-colors duration-500 group-hover:text-white">
+        <h3 className="font-display text-xl font-bold uppercase leading-tight text-white">
           {service.title}
         </h3>
-        <p className="mt-3 text-sm leading-relaxed text-gray-500 transition-colors duration-500 group-hover:text-gray-400">
+        <p className="mt-3 text-sm leading-relaxed text-gray-300">
           {service.description}
         </p>
-        <span className="mt-6 block h-[2px] w-10 bg-gray-200 transition-all duration-500 group-hover:w-full group-hover:bg-white" />
+        <span className="mt-6 block h-[2px] w-10 bg-white/30 transition-all duration-500 group-hover:w-full group-hover:bg-white" />
       </div>
     </article>
   );
