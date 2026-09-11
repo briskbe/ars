@@ -43,7 +43,7 @@ function useInView(threshold = 0.15) {
 function Hero({ page, site }: { page: ContactPage; site: SiteSettings | null }) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => setLoaded(true), []);
-  const heroImage = page.heroImageUrl ?? "/contact.png";
+  const heroImage = page.heroImageUrl ?? "/contact.jpg";
 
   return (
     <section className="relative flex min-h-[60vh] items-end overflow-hidden bg-gray-900 pb-20 pt-32 lg:min-h-[55vh] lg:pb-24 lg:pt-40">
