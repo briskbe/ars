@@ -52,7 +52,7 @@ function useInView(threshold = 0.15) {
 function Hero({ page }: { page: VacaturesPage }) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => setLoaded(true), []);
-  const heroImage = page.heroImageUrl ?? "/vacatures.png";
+  const heroImage = page.heroImageUrl ?? "/vacatures.jpg";
 
   return (
     <section className="relative flex min-h-[60vh] items-end overflow-hidden bg-gray-900 pb-20 pt-32 lg:min-h-[55vh] lg:pb-24 lg:pt-40">

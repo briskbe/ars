@@ -28,7 +28,7 @@ export const PLACEHOLDER_PROJECTS: SanityProject[] = [
     gallery: [
       { url: "/hero.jpg", alt: "Staalstructuur van de productiehal" },
       { url: "/over.jpg", alt: "Detail van de verbindingen" },
-      { url: "/vacatures.png", alt: "Montageteam aan het werk" },
+      { url: "/vacatures.jpg", alt: "Montageteam aan het werk" },
     ],
   },
   {
@@ -72,10 +72,10 @@ export const PLACEHOLDER_PROJECTS: SanityProject[] = [
       "100% goedgekeurd bij controle",
       "Zelfde week terug in productie",
     ],
-    imageUrl: "/contact.png",
+    imageUrl: "/contact.jpg",
     imageAlt: "TIG-laswerk aan inox leidingen",
     gallery: [
-      { url: "/contact.png", alt: "Laswerk aan de procesleidingen" },
+      { url: "/contact.jpg", alt: "Laswerk aan de procesleidingen" },
       { url: "/hero.jpg", alt: "Overzicht van de installatie" },
     ],
   },
@@ -96,10 +96,10 @@ export const PLACEHOLDER_PROJECTS: SanityProject[] = [
       "Uitgelijnd en getest opgeleverd",
       "Nul incidenten",
     ],
-    imageUrl: "/vacatures.png",
+    imageUrl: "/vacatures.jpg",
     imageAlt: "Demontage van industriële machines",
     gallery: [
-      { url: "/vacatures.png", alt: "Demontage van de productielijn" },
+      { url: "/vacatures.jpg", alt: "Demontage van de productielijn" },
       { url: "/over.jpg", alt: "Hermontage op de nieuwe site" },
     ],
   },

@@ -1,0 +1,6 @@
+# Not needed to build or serve the site. Leaving them out of the
+# upload shrinks source size on every deployment.
+.context
+SANITY_SETUP.md
+scripts
+.env.example
